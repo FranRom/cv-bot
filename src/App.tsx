@@ -1,8 +1,15 @@
+import { AppLayout } from "./components/layout/AppLayout";
+import { ChatContainer } from "./components/chat/ChatContainer";
+import cvData from "../data/cv-data.json";
+import type { CvData } from "./lib/types";
+
+const typedCvData = cvData as CvData;
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-      <h1 className="text-3xl font-bold">CV Bot</h1>
-    </div>
+    <AppLayout profile={typedCvData.profile} skills={typedCvData.skills}>
+      <ChatContainer />
+    </AppLayout>
   );
 }
 
