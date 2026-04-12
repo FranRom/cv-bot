@@ -1,0 +1,115 @@
+{
+  "profile": {
+    "name": "Franco R.",
+    "title": "Senior Frontend Engineer",
+    "location": "Buenos Aires, Argentina",
+    "summary": "Senior Frontend Engineer with 8+ years of experience building high-performance web applications. Passionate about React, TypeScript, and crafting great developer and user experiences. I enjoy working on challenging problems at the intersection of design and engineering.",
+    "avatar": "/avatar.jpg",
+    "links": {
+      "github": "https://github.com/franrom",
+      "linkedin": "https://linkedin.com/in/franrom",
+      "website": "https://franrom.dev",
+      "email": "franco@example.com"
+    }
+  },
+  "experience": [
+    {
+      "company": "Acme Corp",
+      "role": "Senior Frontend Engineer",
+      "period": "2022 – Present",
+      "description": "Lead frontend development for a SaaS platform serving 50,000+ users. Own the design system, performance budget, and frontend architecture.",
+      "highlights": [
+        "Reduced initial load time by 40% through code splitting and lazy loading strategies",
+        "Built a reusable component library used across 3 product teams",
+        "Mentored 4 junior engineers and established frontend coding standards",
+        "Led migration from Create React App to Vite, cutting build times by 60%"
+      ],
+      "technologies": ["React", "TypeScript", "Vite", "Tailwind CSS", "React Query", "Zustand", "Vitest"]
+    },
+    {
+      "company": "TechStart",
+      "role": "Frontend Engineer",
+      "period": "2019 – 2022",
+      "description": "Developed and maintained multiple customer-facing web applications in an agile environment. Collaborated closely with product and design teams.",
+      "highlights": [
+        "Delivered 12+ features from design handoff to production within deadlines",
+        "Improved test coverage from 30% to 80% across the main application",
+        "Integrated third-party APIs including Stripe, Twilio, and Google Maps",
+        "Implemented real-time features using WebSockets and Server-Sent Events"
+      ],
+      "technologies": ["React", "JavaScript", "Redux", "SCSS", "Jest", "Node.js", "Express"]
+    }
+  ],
+  "skills": {
+    "frontend": [
+      { "name": "React", "level": "Expert" },
+      { "name": "TypeScript", "level": "Expert" },
+      { "name": "JavaScript", "level": "Expert" },
+      { "name": "Tailwind CSS", "level": "Expert" },
+      { "name": "Vite", "level": "Advanced" },
+      { "name": "Next.js", "level": "Advanced" },
+      { "name": "React Query", "level": "Advanced" },
+      { "name": "Zustand", "level": "Advanced" }
+    ],
+    "backend": [
+      { "name": "Node.js", "level": "Advanced" },
+      { "name": "Express", "level": "Advanced" },
+      { "name": "PostgreSQL", "level": "Intermediate" },
+      { "name": "REST APIs", "level": "Expert" },
+      { "name": "GraphQL", "level": "Intermediate" }
+    ],
+    "tools": [
+      { "name": "Git", "level": "Expert" },
+      { "name": "Vitest", "level": "Advanced" },
+      { "name": "Jest", "level": "Advanced" },
+      { "name": "Docker", "level": "Intermediate" },
+      { "name": "GitHub Actions", "level": "Intermediate" }
+    ],
+    "other": [
+      { "name": "Agile / Scrum", "level": "Advanced" },
+      { "name": "Performance Optimization", "level": "Advanced" },
+      { "name": "Accessibility (WCAG)", "level": "Intermediate" },
+      { "name": "Technical Writing", "level": "Intermediate" }
+    ]
+  },
+  "projects": [
+    {
+      "name": "CV Bot",
+      "description": "An AI-powered conversational interface for my personal CV, built with React, TypeScript, and the Vercel AI SDK. Visitors can ask natural language questions about my experience, skills, and projects.",
+      "role": "Creator & Developer",
+      "highlights": [
+        "Multi-provider LLM support (Anthropic, OpenAI, Google, Groq)",
+        "Structured tool calling for precise CV data retrieval",
+        "Rate limiting and session management",
+        "Dark mode and responsive design"
+      ],
+      "technologies": ["React 19", "TypeScript", "Vite", "Tailwind CSS 4", "Vercel AI SDK", "Anthropic Claude"],
+      "url": "https://cv.franrom.dev",
+      "repo": "https://github.com/franrom/cv-bot"
+    }
+  ],
+  "education": [
+    {
+      "institution": "Universidad de Buenos Aires (UBA)",
+      "degree": "Bachelor's Degree in Computer Science",
+      "period": "2014 – 2019",
+      "details": "Focused on algorithms, data structures, software engineering, and distributed systems. Graduated with honors."
+    }
+  ],
+  "languages": [
+    {
+      "language": "Spanish",
+      "level": "Native"
+    },
+    {
+      "language": "English",
+      "level": "Professional (C1)"
+    }
+  ],
+  "availability": {
+    "status": "Open to opportunities",
+    "roles": ["Senior Frontend Engineer", "Lead Frontend Engineer", "Full-Stack Engineer"],
+    "location_preference": "Remote or Buenos Aires",
+    "notice_period": "2 weeks"
+  }
+}

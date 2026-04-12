@@ -1,0 +1,28 @@
+{
+  "llm": {
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5-20251001",
+    "maxTokens": 1024,
+    "temperature": 0.7
+  },
+  "chat": {
+    "tone": "friendly",
+    "systemPromptExtra": "",
+    "welcomeMessage": "Hi! I'm Franco's AI assistant. Ask me anything about his experience, skills, or projects.",
+    "suggestedQuestions": [
+      "What's Franco's tech stack?",
+      "Tell me about his most recent role",
+      "Show me projects using React",
+      "How can I contact Franco?"
+    ]
+  },
+  "rateLimit": {
+    "maxMessagesPerSession": 20,
+    "maxSessionsPerDay": 100,
+    "cooldownMessage": "Franco's bot is resting. Try again tomorrow or reach out directly at franco@example.com"
+  },
+  "theme": {
+    "primaryColor": "#60a5fa",
+    "mode": "dark"
+  }
+}
