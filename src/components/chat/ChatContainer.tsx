@@ -70,7 +70,7 @@ export function ChatContainer() {
 
       <ChatInput
         value={input}
-        onChange={handleInputChange}
+        onChange={(value) => handleInputChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>)}
         onSubmit={handleSubmit}
         isLoading={isLoading}
       />

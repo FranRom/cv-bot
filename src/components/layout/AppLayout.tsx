@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sidebar } from "../sidebar/Sidebar";
+import Sidebar from "../sidebar/Sidebar";
 import type { Profile, Skills } from "../../lib/types";
 
 interface AppLayoutProps {
