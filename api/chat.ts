@@ -39,15 +39,28 @@ export default async function handler(req: Request) {
 
   const trimmedMessages = messages.slice(-10);
 
-  const result = streamText({
-    model: getModel(typedConfig.llm),
-    system: buildSystemPrompt(typedCvData.profile.name, typedConfig.chat),
-    messages: trimmedMessages,
-    tools: createTools(typedCvData),
-    maxSteps: 3,
-    maxTokens: typedConfig.llm.maxTokens,
-    temperature: typedConfig.llm.temperature,
-  });
+  try {
+    const result = streamText({
+      model: getModel(typedConfig.llm),
+      system: buildSystemPrompt(typedCvData.profile.name, typedConfig.chat),
+      messages: trimmedMessages,
+      tools: createTools(typedCvData),
+      maxSteps: 3,
+      maxTokens: typedConfig.llm.maxTokens,
+      temperature: typedConfig.llm.temperature,
+    });
 
-  return result.toDataStreamResponse();
+    return result.toDataStreamResponse({
+      getErrorMessage: (error) => {
+        console.error("[api/chat] Stream error:", error);
+        return String(error);
+      },
+    });
+  } catch (error) {
+    console.error("[api/chat] Error:", error);
+    return new Response(
+      JSON.stringify({ error: String(error) }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 }
