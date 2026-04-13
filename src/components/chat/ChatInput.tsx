@@ -1,13 +1,17 @@
 import { cn } from "../../lib/cn";
+import { ToneSelector } from "./ToneSelector";
+import type { Tone } from "../../lib/types";
 
 interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
   isLoading: boolean;
+  tone: Tone;
+  onToneChange: (tone: Tone) => void;
 }
 
-export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputProps) {
+export function ChatInput({ value, onChange, onSubmit, isLoading, tone, onToneChange }: ChatInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoading && value.trim()) {
@@ -18,8 +22,9 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex gap-3 p-4 mx-4 mb-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)]"
+      className="flex items-center gap-3 p-4 mx-4 mb-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)]"
     >
+      <ToneSelector tone={tone} onToneChange={onToneChange} />
       <input
         type="text"
         value={value}
@@ -35,6 +40,7 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
       <button
         type="submit"
         disabled={isLoading || !value}
+        aria-label="Send arrow"
         className={cn(
           "w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0 transition-colors",
           "bg-blue-600 text-white hover:bg-blue-500",

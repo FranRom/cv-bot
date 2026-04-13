@@ -116,6 +116,8 @@ export function ChatContainer() {
   const {
     input,
     setInput,
+    tone,
+    setTone,
     processedMessages,
     hasMessages,
     isLoading,
@@ -174,6 +176,8 @@ export function ChatContainer() {
             onChange={setInput}
             onSubmit={handleSubmit}
             isLoading={isLoading}
+            tone={tone}
+            onToneChange={setTone}
           />
         </div>
       </div>
