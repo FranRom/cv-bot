@@ -274,6 +274,10 @@
     {
       "category": "Social",
       "items": ["Building meaningful connections", "Community"]
+    },
+    {
+      "category": "Travel",
+      "items": ["Traveling"]
     }
   ],
   "availability": {

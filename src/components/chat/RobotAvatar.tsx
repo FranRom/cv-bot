@@ -29,9 +29,12 @@ export function RobotAvatar({ isTalking, size = "w-10 h-10" }: RobotAvatarProps)
     <img
       src={isTalking ? FRAMES[frameIndex] : IDLE}
       alt="Fran Bot"
-      className={`${size} rounded-full object-cover flex-shrink-0 ring-1 ring-white/10 ${
-        isTalking ? "ring-blue-400/30" : ""
-      } transition-shadow`}
+      className={`${size} rounded-full object-cover flex-shrink-0 transition-shadow duration-300`}
+      style={{
+        boxShadow: isTalking
+          ? "0 0 20px rgba(56,189,248,0.8), 0 0 50px rgba(56,189,248,0.5), 0 0 80px rgba(56,189,248,0.3), inset 0 0 20px rgba(56,189,248,0.15)"
+          : "0 0 12px rgba(56,189,248,0.5), 0 0 30px rgba(56,189,248,0.3), 0 0 50px rgba(56,189,248,0.15)",
+      }}
     />
   );
 }
