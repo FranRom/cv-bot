@@ -92,8 +92,10 @@ export interface LlmConfig {
   temperature: number;
 }
 
+export type Tone = "professional" | "friendly" | "witty" | "casual";
+
 export interface ChatConfig {
-  tone: "professional" | "friendly" | "witty" | "casual";
+  tone: Tone;
   systemPromptExtra: string;
   welcomeMessage: string;
   suggestedQuestions: string[];

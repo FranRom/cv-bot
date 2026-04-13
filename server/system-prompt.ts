@@ -1,7 +1,7 @@
-import type { ChatConfig } from "../src/lib/types";
+import type { ChatConfig, Tone } from "../src/lib/types";
 import { PROMPT_SECTIONS } from "../prompts";
 
-export const TONE_MODIFIERS: Record<ChatConfig["tone"], string> = {
+export const TONE_MODIFIERS: Record<Tone, string> = {
   professional:
     "Be professional and concise. Use clear, direct language. Avoid casual expressions.",
   friendly:
