@@ -8,7 +8,7 @@ import { checkInput } from "./_lib/guard-rails";
 import { detectSkill } from "./_lib/skill-router";
 import cvData from "../data/cv-data.json";
 import config from "../data/config.json";
-import type { CvData, Config } from "./_lib/types";
+import type { CvData, Config, Tone } from "./_lib/types";
 
 const typedCvData = cvData as CvData;
 const typedConfig = config as Config;
@@ -16,10 +16,7 @@ const rateLimiter = new RateLimiter(typedConfig.rateLimit);
 
 const MAX_BODY_SIZE = 50_000;
 
-const systemPrompt = buildSystemPrompt(
-  typedCvData.profile.name,
-  typedConfig.chat
-);
+const defaultTone = typedConfig.chat.tone;
 
 const tools = createTools(typedCvData);
 
@@ -125,7 +122,7 @@ export default async function handler(
 
   // Parse body
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let body: { messages?: any[] };
+  let body: { messages?: any[]; tone?: string };
   try {
     const raw = await readBody(req);
     body = JSON.parse(raw);
@@ -134,12 +131,21 @@ export default async function handler(
     return;
   }
 
-  const { messages } = body;
+  const { messages, tone: rawTone } = body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     sendJson(400, { error: "Messages are required." });
     return;
   }
+
+  // Validate tone
+  const validTones = ["professional", "friendly", "witty", "casual"] as const;
+  const tone = rawTone && validTones.includes(rawTone as Tone)
+    ? (rawTone as Tone)
+    : defaultTone;
+
+  const chatConfigWithTone = { ...typedConfig.chat, tone };
+  const systemPrompt = buildSystemPrompt(typedCvData.profile.name, chatConfigWithTone);
 
   // Guard rails
   const lastMsg = messages[messages.length - 1] as {
