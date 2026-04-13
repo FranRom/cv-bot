@@ -1,4 +1,4 @@
-import { SKILL_PROMPTS } from "./skill-prompts";
+import { SKILL_PROMPTS } from "./skill-prompts.js";
 
 /**
  * Skill Router — detects user intent and returns the appropriate skill prompt.

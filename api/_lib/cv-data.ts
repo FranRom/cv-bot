@@ -5,7 +5,7 @@ import type {
   Project,
   Skills,
   Education,
-} from "./types";
+} from "./types.js";
 
 export function getProfile(data: CvData): Profile {
   return data.profile;

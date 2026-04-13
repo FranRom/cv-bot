@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod/v4";
-import type { CvData } from "./types";
+import type { CvData } from "./types.js";
 import {
   getProfile,
   getExperience,
@@ -11,7 +11,7 @@ import {
   getContact,
   getInterests,
   getCryptoExperience,
-} from "./cv-data";
+} from "./cv-data.js";
 
 export function createTools(data: CvData) {
   return {

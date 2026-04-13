@@ -1,13 +1,13 @@
 import { streamText, convertToModelMessages, stepCountIs } from "ai";
-import { createTools } from "./_lib/tools";
-import { buildSystemPrompt } from "./_lib/system-prompt";
-import { getModel } from "./_lib/provider";
-import { RateLimiter } from "./_lib/rate-limiter";
-import { checkInput } from "./_lib/guard-rails";
-import { detectSkill } from "./_lib/skill-router";
+import { createTools } from "./_lib/tools.js";
+import { buildSystemPrompt } from "./_lib/system-prompt.js";
+import { getModel } from "./_lib/provider.js";
+import { RateLimiter } from "./_lib/rate-limiter.js";
+import { checkInput } from "./_lib/guard-rails.js";
+import { detectSkill } from "./_lib/skill-router.js";
 import cvData from "../data/cv-data.json";
 import config from "../data/config.json";
-import type { CvData, Config } from "./_lib/types";
+import type { CvData, Config } from "./_lib/types.js";
 
 const typedCvData = cvData as CvData;
 const typedConfig = config as Config;

@@ -1,7 +1,7 @@
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
-import type { LlmConfig } from "./types";
+import type { LlmConfig } from "./types.js";
 
 export function getModel(config: LlmConfig) {
   switch (config.provider) {
