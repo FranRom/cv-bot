@@ -46,15 +46,22 @@ All tools read from a single `cv-data.json` file — no database, no external AP
 
 ## Features
 
-- **Animated robot avatar** that talks while the bot is streaming responses
+- **Animated robot avatar** with blue neon glow that talks while the bot is streaming
+- **Tool call transparency** — speech bubble shows which tools are being called in real-time
+- **Skill-based prompt routing** — elevator pitch, job match, deep dive, interview questions
 - **Sidebar** with quick-glance profile info, skills tags, interests, and links
+- **Suggested questions sidebar** — persistent during conversation for easy follow-ups
 - **Markdown rendering** in bot responses (lists, bold, links, headings)
-- **Suggested questions** to guide visitors who don't know what to ask
+- **Guard rails** — prompt injection detection with Unicode normalization
+- **Graceful degradation** — friendly error fallback with contact links when LLM fails
 - **Rate limiting** to protect your API budget (per-session + daily caps)
+- **Prompt caching** — Anthropic cache_control saves ~90% on repeat conversations
 - **Configurable LLM provider** — Claude, OpenAI, or Gemini
 - **Configurable tone** — professional, friendly, witty, or casual
 - **Mobile responsive** — sidebar collapses into a drawer on small screens
-- **Dark theme** with customizable accent color
+- **Dark theme** with CSS design tokens for easy customization
+- **Pre-commit hooks** — Husky runs all 114 tests before every commit
+- **CI/CD** — GitHub Actions runs tests + type-check on push/PR
 
 ## AI Engineering
 
@@ -153,50 +160,62 @@ Tools are designed to be **lean** — they return only filtered data, not the en
 | Layer | Technology |
 |---|---|
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS 4 |
-| AI | Vercel AI SDK (streaming, tool-calling, multi-provider) |
-| Backend | Vercel Edge Functions |
+| AI | Vercel AI SDK (streaming, tool-calling, multi-provider), skill routing |
+| Backend | Vercel Serverless Functions (esbuild-bundled) |
 | Schema | Zod 4 |
-| Testing | Vitest, React Testing Library |
+| Utilities | clsx + tailwind-merge (`cn()`), CSS design tokens |
+| Testing | Vitest, React Testing Library (114 tests) |
+| CI/CD | GitHub Actions, Husky pre-commit hooks |
 
 ## Project Structure
 
 ```
 cv-bot/
-├── api/
-│   └── chat.ts                  # Vercel Edge function — LLM proxy + tool execution
+├── functions-src/
+│   ├── chat.ts                  # Vercel serverless function — LLM proxy + tools
+│   └── _lib/                    # Server modules (bundled by esbuild for deploy)
+│       ├── tools.ts             # LLM tool definitions (Zod 4 schemas + executors)
+│       ├── system-prompt.ts     # Prompt composer from modular sections
+│       ├── skill-router.ts      # Intent detection → skill prompt routing
+│       ├── guard-rails.ts       # Prompt injection detection + input validation
+│       ├── provider.ts          # Multi-provider LLM router
+│       ├── rate-limiter.ts      # IP-based rate limiting
+│       └── cv-data.ts           # CV data query functions
 ├── data/
 │   ├── cv-data.json             # Your CV data (edit this)
 │   └── config.json              # App config (provider, tone, rate limits, theme)
-├── prompts/                     # Composable system prompt files
-│   ├── personality.md           # Voice, identity, behavior
-│   ├── boundaries.md            # Scope, off-limits topics
-│   ├── inference-rules.md       # Skill gap handling, inferences
-│   ├── response-style.md        # Formatting and length guidelines
-│   └── examples.md              # Few-shot examples for response quality
+├── prompts/
+│   ├── index.ts                 # System prompt sections (runtime source of truth)
+│   ├── *.md                     # Documentation versions of prompt files
+│   └── skills/
+│       ├── index.ts             # Skill prompts (elevator-pitch, job-match, etc.)
+│       └── *.md                 # Documentation versions of skill files
 ├── server/
-│   ├── tools.ts                 # LLM tool definitions (Zod schemas + executors)
-│   ├── system-prompt.ts         # Prompt composer — loads and interpolates prompt files
-│   ├── provider.ts              # Multi-provider LLM router
-│   ├── rate-limiter.ts          # IP-based rate limiting
-│   ├── cv-data.ts               # CV data query functions
 │   └── api-dev-plugin.ts        # Vite plugin for local API development
+├── scripts/
+│   ├── build-vercel.mjs         # Full Vercel build (frontend + API)
+│   └── build-api.mjs            # esbuild bundler for the API function
 ├── src/
 │   ├── components/
 │   │   ├── chat/                # ChatContainer, MessageBubble, ChatInput,
-│   │   │                        # RobotAvatar, TypingIndicator, SuggestedQuestions
+│   │   │                        # RobotAvatar, ToolCallIndicator, ErrorFallback,
+│   │   │                        # TypingIndicator, SuggestedQuestions
 │   │   ├── sidebar/             # Sidebar, ProfileCard, SkillsTags, ExternalLinks
 │   │   └── layout/              # AppLayout (responsive grid + mobile drawer)
+│   ├── hooks/
+│   │   └── useCvChat.ts         # Custom hook — chat logic separated from UI
 │   ├── lib/
 │   │   ├── types.ts             # Shared TypeScript types
-│   │   └── config.ts            # Config loader
+│   │   ├── config.ts            # Config loader
+│   │   └── cn.ts                # cn() utility (clsx + tailwind-merge)
 │   ├── App.tsx
 │   └── main.tsx
 ├── public/
 │   ├── avatar.jpg               # Your profile photo
 │   └── robot-*.png              # Robot avatar frames (idle, talking)
 └── __tests__/
-    ├── ai/                      # AI response evaluation tests (21 tests)
-    ├── server/                  # Server logic unit tests
+    ├── ai/                      # AI evaluation tests (21 tests)
+    ├── server/                  # Server logic + guard rails + skill router tests
     └── components/              # React component tests
 ```
 
@@ -278,18 +297,23 @@ GOOGLE_GENERATIVE_AI_API_KEY=...
 
 | Command | Description |
 |---|---|
-| `npm run dev` | Start dev server (frontend + API) |
-| `npm run build` | Production build |
+| `npm run dev` | Start dev server (frontend + API via Vite plugin) |
+| `npm run build` | TypeScript check + Vite production build |
+| `npm run build:vercel` | Full Vercel build (frontend + esbuild-bundled API) |
 | `npm run preview` | Preview production build |
 | `npm test` | Run tests in watch mode |
-| `npm run test:run` | Run tests once |
+| `npm run test:run` | Run tests once (114 tests) |
 
 ## Security
 
 - API key lives exclusively in environment variables — never in the repo
 - All LLM calls proxied through the serverless function
-- Rate limiting prevents abuse (per-IP session limits + global daily cap)
+- **Guard rails** — prompt injection detection with Unicode normalization (23 tests)
+- **CORS** — API restricted to same origin in production
+- **Body size limit** — 50KB max to prevent memory exhaustion
+- Rate limiting prevents abuse (per-IP using `x-real-ip`, session + daily caps)
 - Input validation: max 500 character messages, conversation history capped at 10 messages
+- Generic error messages to client — no stack traces or internal details leaked
 - System prompt instructs the bot to only answer CV-related questions
 - No user data collection, no database, no analytics
 
