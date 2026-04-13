@@ -1,3 +1,4 @@
+import type { IncomingMessage, ServerResponse } from "http";
 import { streamText, convertToModelMessages, stepCountIs } from "ai";
 import { createTools } from "./_lib/tools";
 import { buildSystemPrompt } from "./_lib/system-prompt";
@@ -13,21 +14,16 @@ const typedCvData = cvData as CvData;
 const typedConfig = config as Config;
 const rateLimiter = new RateLimiter(typedConfig.rateLimit);
 
-// Max request body size (50KB — generous for a chat)
 const MAX_BODY_SIZE = 50_000;
 
-// Pre-build the system prompt once — it never changes at runtime.
 const systemPrompt = buildSystemPrompt(
   typedCvData.profile.name,
   typedConfig.chat
 );
 
-// Pre-build tools once — they're static.
 const tools = createTools(typedCvData);
 
 // Workaround: AI SDK strips "type" from empty object schemas.
-// Patch fetch to ensure input_schema always has "type": "object".
-// TODO: Remove once https://github.com/vercel/ai/issues/ is fixed upstream.
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input, init) => {
   if (
@@ -47,80 +43,105 @@ globalThis.fetch = async (input, init) => {
         init = { ...init, body: JSON.stringify(body) };
       }
     } catch {
-      // If body isn't parseable JSON, pass through unchanged
+      // pass through
     }
   }
   return originalFetch(input, init);
 };
 
-export default async function handler(req: Request) {
+// Helper: read Node.js request body as string
+function readBody(req: IncomingMessage): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    req.on("data", (chunk: Buffer) => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks).toString()));
+    req.on("error", reject);
+  });
+}
+
+// Helper: get header value from Node.js request
+function getHeader(req: IncomingMessage, name: string): string | undefined {
+  const val = req.headers[name.toLowerCase()];
+  return Array.isArray(val) ? val[0] : val;
+}
+
+// Helper: pipe Web Response to Node.js ServerResponse
+async function pipeResponse(webRes: Response, res: ServerResponse) {
+  res.writeHead(webRes.status, Object.fromEntries(webRes.headers));
+  if (webRes.body) {
+    const reader = webRes.body.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      res.write(value);
+    }
+  }
+  res.end();
+}
+
+export default async function handler(
+  req: IncomingMessage,
+  res: ServerResponse
+) {
   if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+    res.writeHead(405);
+    res.end("Method not allowed");
+    return;
   }
 
-  // CORS: restrict to same origin in production
-  const origin = req.headers.get("origin") ?? "";
-  const allowedOrigin =
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : origin; // Allow any origin in local dev
+  const origin = getHeader(req, "origin") ?? "";
+  const allowedOrigin = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : origin;
 
-  const corsHeaders = {
+  const corsHeaders: Record<string, string> = {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "POST",
     "Access-Control-Allow-Headers": "Content-Type",
   };
 
-  // Handle CORS preflight (method already checked as POST above,
-  // but OPTIONS requests are handled by Vercel's Edge runtime)
+  const sendJson = (status: number, data: object) => {
+    res.writeHead(status, { ...corsHeaders, "Content-Type": "application/json" });
+    res.end(JSON.stringify(data));
+  };
 
-  // Body size check — prevent memory exhaustion
-  const contentLength = parseInt(
-    req.headers.get("content-length") ?? "0",
-    10
-  );
+  // Body size check
+  const contentLength = parseInt(getHeader(req, "content-length") ?? "0", 10);
   if (contentLength > MAX_BODY_SIZE) {
-    return new Response(
-      JSON.stringify({ error: "Request too large." }),
-      { status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    sendJson(413, { error: "Request too large." });
+    return;
   }
 
-  // Rate limit check — use x-real-ip (set by Vercel, not spoofable) with fallback
+  // Rate limit
   const ip =
-    req.headers.get("x-real-ip") ??
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    getHeader(req, "x-real-ip") ??
+    getHeader(req, "x-forwarded-for")?.split(",")[0]?.trim() ??
     "unknown";
   const rateCheck = await rateLimiter.check(ip);
   if (!rateCheck.allowed) {
-    return new Response(JSON.stringify({ error: rateCheck.message }), {
-      status: 429,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    sendJson(429, { error: rateCheck.message });
+    return;
   }
 
-  // Parse body with error handling
+  // Parse body
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let body: { messages?: any[] };
   try {
-    body = await req.json();
+    const raw = await readBody(req);
+    body = JSON.parse(raw);
   } catch {
-    return new Response(
-      JSON.stringify({ error: "Invalid request body." }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    sendJson(400, { error: "Invalid request body." });
+    return;
   }
 
   const { messages } = body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
-    return new Response(
-      JSON.stringify({ error: "Messages are required." }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    sendJson(400, { error: "Messages are required." });
+    return;
   }
 
-  // Guard rails: validate the last user message before sending to LLM
+  // Guard rails
   const lastMsg = messages[messages.length - 1] as {
     role?: string;
     content?: string;
@@ -136,14 +157,12 @@ export default async function handler(req: Request) {
       "";
     const guard = checkInput(text);
     if (!guard.allowed) {
-      return new Response(JSON.stringify({ error: guard.reason }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      sendJson(400, { error: guard.reason });
+      return;
     }
   }
 
-  // Skill routing: detect intent and augment system prompt
+  // Skill routing
   const lastUserText =
     lastMsg?.role === "user"
       ? (lastMsg.content ??
@@ -177,13 +196,11 @@ export default async function handler(req: Request) {
       temperature: typedConfig.llm.temperature,
     });
 
-    return result.toUIMessageStreamResponse();
+    // Convert the Web Response to Node.js response
+    const webResponse = result.toUIMessageStreamResponse();
+    await pipeResponse(webResponse, res);
   } catch (error) {
-    // Log full error server-side, return generic message to client
     console.error("[api/chat] Error:", error);
-    return new Response(
-      JSON.stringify({ error: "Something went wrong. Please try again." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    sendJson(500, { error: "Something went wrong. Please try again." });
   }
 }
