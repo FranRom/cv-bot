@@ -14,7 +14,8 @@
       "What's Fran's tech stack?",
       "Tell me about his Web3 experience",
       "What has he built with AI?",
-      "Show me his DeFi projects"
+      "Show me his DeFi projects",
+      "How was this bot built?"
     ]
   },
   "rateLimit": {
