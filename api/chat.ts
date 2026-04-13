@@ -3,6 +3,7 @@ import { createTools } from "../server/tools";
 import { buildSystemPrompt } from "../server/system-prompt";
 import { getModel } from "../server/provider";
 import { RateLimiter } from "../server/rate-limiter";
+import { checkInput } from "../server/guard-rails";
 import cvData from "../data/cv-data.json";
 import config from "../data/config.json";
 import type { CvData, Config } from "../src/lib/types";
@@ -61,6 +62,25 @@ export default async function handler(req: Request) {
 
   const body = await req.json();
   const { messages } = body;
+
+  // Guard rails: validate the last user message before sending to LLM
+  const lastMsg = messages?.[messages.length - 1];
+  if (lastMsg?.role === "user") {
+    const text =
+      lastMsg.content ??
+      lastMsg.parts
+        ?.filter((p: { type: string }) => p.type === "text")
+        .map((p: { text: string }) => p.text)
+        .join("") ??
+      "";
+    const guard = checkInput(text);
+    if (!guard.allowed) {
+      return new Response(JSON.stringify({ error: guard.reason }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }
 
   const modelMessages = await convertToModelMessages(messages.slice(-10));
 

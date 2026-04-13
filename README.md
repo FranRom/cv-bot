@@ -113,6 +113,16 @@ When the LLM fails or the rate limit is hit, the bot doesn't show a generic erro
 
 This ensures visitors always have a way to connect, even when the AI is unavailable.
 
+### Guard Rails
+
+Server-side input validation runs before every message reaches the LLM:
+
+- **Prompt injection detection** — regex patterns catch common injection attempts ("ignore previous instructions", "you are now a...", "reveal your system prompt", etc.) and return a polite redirect instead of forwarding to the LLM
+- **Length validation** — messages over 500 characters are rejected
+- **Empty input** — blank messages are caught server-side
+
+All guard rails are tested (23 tests) with both legitimate questions (allowed) and injection attempts (blocked). The patterns are deliberately conservative — false positives are worse than letting a borderline message through, since the system prompt already constrains the bot's behavior.
+
 ### Tool Design
 
 Tools are designed to be **lean** — they return only filtered data, not the entire CV. This reduces token usage per response:
