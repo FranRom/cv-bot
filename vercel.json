@@ -1,4 +1,4 @@
 {
-  "buildCommand": "node scripts/build-vercel.mjs",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": ".vercel/output"
 }
