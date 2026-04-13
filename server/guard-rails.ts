@@ -26,6 +26,13 @@ export interface GuardRailResult {
   reason?: string;
 }
 
+function normalizeInput(input: string): string {
+  // Strip zero-width characters that can be used to bypass regex patterns
+  return input
+    .replace(/[\u200B-\u200F\u2028-\u202F\uFEFF\u00AD]/g, "")
+    .normalize("NFKC");
+}
+
 export function checkInput(message: string): GuardRailResult {
   // Length check
   if (message.length > 500) {
@@ -37,9 +44,12 @@ export function checkInput(message: string): GuardRailResult {
     return { allowed: false, reason: "Message cannot be empty." };
   }
 
+  // Normalize to catch Unicode bypass attempts
+  const normalized = normalizeInput(message);
+
   // Prompt injection detection
   for (const pattern of INJECTION_PATTERNS) {
-    if (pattern.test(message)) {
+    if (pattern.test(normalized)) {
       return {
         allowed: false,
         reason:

@@ -14,6 +14,9 @@ const typedCvData = cvData as CvData;
 const typedConfig = config as Config;
 const rateLimiter = new RateLimiter(typedConfig.rateLimit);
 
+// Max request body size (50KB — generous for a chat)
+const MAX_BODY_SIZE = 50_000;
+
 // Pre-build the system prompt once — it never changes at runtime.
 const systemPrompt = buildSystemPrompt(
   typedCvData.profile.name,
@@ -25,21 +28,27 @@ const tools = createTools(typedCvData);
 
 // Workaround: AI SDK strips "type" from empty object schemas.
 // Patch fetch to ensure input_schema always has "type": "object".
+// TODO: Remove once https://github.com/vercel/ai/issues/ is fixed upstream.
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input, init) => {
   if (
     typeof input === "string" &&
     input.includes("anthropic.com") &&
-    init?.body
+    init?.body &&
+    typeof init.body === "string"
   ) {
-    const body = JSON.parse(init.body as string);
-    if (body.tools) {
-      for (const tool of body.tools) {
-        if (tool.input_schema && !tool.input_schema.type) {
-          tool.input_schema.type = "object";
+    try {
+      const body = JSON.parse(init.body);
+      if (body.tools) {
+        for (const tool of body.tools) {
+          if (tool.input_schema && !tool.input_schema.type) {
+            tool.input_schema.type = "object";
+          }
         }
+        init = { ...init, body: JSON.stringify(body) };
       }
-      init = { ...init, body: JSON.stringify(body) };
+    } catch {
+      // If body isn't parseable JSON, pass through unchanged
     }
   }
   return originalFetch(input, init);
@@ -50,34 +59,87 @@ export default async function handler(req: Request) {
     return new Response("Method not allowed", { status: 405 });
   }
 
+  // CORS: restrict to same origin in production
+  const origin = req.headers.get("origin") ?? "";
+  const allowedOrigin =
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : origin; // Allow any origin in local dev
+
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
+  // Handle CORS preflight (method already checked as POST above,
+  // but OPTIONS requests are handled by Vercel's Edge runtime)
+
+  // Body size check — prevent memory exhaustion
+  const contentLength = parseInt(
+    req.headers.get("content-length") ?? "0",
+    10
+  );
+  if (contentLength > MAX_BODY_SIZE) {
+    return new Response(
+      JSON.stringify({ error: "Request too large." }),
+      { status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Rate limit check — use x-real-ip (set by Vercel, not spoofable) with fallback
   const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    req.headers.get("x-real-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown";
   const rateCheck = await rateLimiter.check(ip);
   if (!rateCheck.allowed) {
     return new Response(JSON.stringify({ error: rateCheck.message }), {
       status: 429,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
-  const body = await req.json();
+  // Parse body with error handling
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let body: { messages?: any[] };
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: "Invalid request body." }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   const { messages } = body;
 
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return new Response(
+      JSON.stringify({ error: "Messages are required." }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   // Guard rails: validate the last user message before sending to LLM
-  const lastMsg = messages?.[messages.length - 1];
+  const lastMsg = messages[messages.length - 1] as {
+    role?: string;
+    content?: string;
+    parts?: Array<{ type: string; text?: string }>;
+  };
   if (lastMsg?.role === "user") {
     const text =
       lastMsg.content ??
       lastMsg.parts
-        ?.filter((p: { type: string }) => p.type === "text")
-        .map((p: { text: string }) => p.text)
+        ?.filter((p) => p.type === "text")
+        .map((p) => p.text)
         .join("") ??
       "";
     const guard = checkInput(text);
     if (!guard.allowed) {
       return new Response(JSON.stringify({ error: guard.reason }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
   }
@@ -87,9 +149,6 @@ export default async function handler(req: Request) {
   try {
     const result = streamText({
       model: getModel(typedConfig.llm),
-      // System prompt with cache_control: Anthropic caches this across
-      // requests within a 5-minute window, saving ~90% on input tokens.
-      // Other providers ignore the providerOptions and just use the text.
       system: {
         role: "system" as const,
         content: systemPrompt,
@@ -106,10 +165,11 @@ export default async function handler(req: Request) {
 
     return result.toUIMessageStreamResponse();
   } catch (error) {
+    // Log full error server-side, return generic message to client
     console.error("[api/chat] Error:", error);
     return new Response(
-      JSON.stringify({ error: String(error) }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ error: "Something went wrong. Please try again." }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 }
