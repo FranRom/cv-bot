@@ -1,26 +1,37 @@
-import { useChat } from "ai/react";
-import { useEffect, useRef } from "react";
+import { useChat } from "@ai-sdk/react";
+import { useState, useEffect, useRef } from "react";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
 import { TypingIndicator } from "./TypingIndicator";
 import { SuggestedQuestions } from "./SuggestedQuestions";
 import { config } from "../../lib/config";
 
-export function ChatContainer() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, append } =
-    useChat({
-      api: "/api/chat",
-      maxSteps: 3,
-    });
+function getTextContent(message: { parts: Array<{ type: string; text?: string }> }): string {
+  return message.parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join("");
+}
 
+export function ChatContainer() {
+  const { messages, sendMessage, status, setMessages } = useChat();
+
+  const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isLoading = status === "submitted" || status === "streaming";
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const handleSubmit = () => {
+    if (!input.trim()) return;
+    sendMessage({ text: input });
+    setInput("");
+  };
+
   const handleSuggestedQuestion = (question: string) => {
-    append({ role: "user", content: question });
+    sendMessage({ text: question });
   };
 
   const hasMessages = messages.length > 0;
@@ -44,8 +55,7 @@ export function ChatContainer() {
 
         {messages.map((message) => {
           if (message.role === "user" || message.role === "assistant") {
-            const text =
-              typeof message.content === "string" ? message.content : "";
+            const text = getTextContent(message);
             if (!text) return null;
 
             return (
@@ -68,9 +78,20 @@ export function ChatContainer() {
         <div ref={messagesEndRef} />
       </div>
 
+      {hasMessages && (
+        <div className="flex justify-center py-2 border-t border-white/5">
+          <button
+            onClick={() => setMessages([])}
+            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            Clear chat
+          </button>
+        </div>
+      )}
+
       <ChatInput
         value={input}
-        onChange={(value) => handleInputChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>)}
+        onChange={setInput}
         onSubmit={handleSubmit}
         isLoading={isLoading}
       />

@@ -8,18 +8,19 @@
   "chat": {
     "tone": "friendly",
     "systemPromptExtra": "",
-    "welcomeMessage": "Hi! I'm Franco's AI assistant. Ask me anything about his experience, skills, or projects.",
+    "welcomeMessage": "Hi! I'm Fran's AI assistant. Ask me anything about his experience, skills, or projects.",
     "suggestedQuestions": [
-      "What's Franco's tech stack?",
-      "Tell me about his most recent role",
-      "Show me projects using React",
-      "How can I contact Franco?"
+      "Tell me about how you can help me",
+      "What's Fran's tech stack?",
+      "Tell me about his Web3 experience",
+      "What has he built with AI?",
+      "Show me his DeFi projects"
     ]
   },
   "rateLimit": {
     "maxMessagesPerSession": 20,
     "maxSessionsPerDay": 100,
-    "cooldownMessage": "Franco's bot is resting. Try again tomorrow or reach out directly at franco@example.com"
+    "cooldownMessage": "I'm resting. Try again later I need a nap"
   },
   "theme": {
     "primaryColor": "#60a5fa",

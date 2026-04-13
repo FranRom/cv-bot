@@ -17,14 +17,19 @@ export default function Sidebar({ profile, skills }: Props) {
       <hr className="border-white/10" />
       <ExternalLinks links={profile.links} />
       <hr className="border-white/10" />
-      <a
-        href="https://github.com/franrom/cv-bot"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-xs text-gray-500 hover:text-gray-300 transition-colors text-center"
-      >
-        Fork this project
-      </a>
+      <div className="text-center">
+        <p className="text-xs text-gray-500">
+          Made with <span className="text-red-400">&#9829;</span> by Fran and AI
+        </p>
+        <a
+          href="https://github.com/FranRom/cv-bot"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+        >
+          Fork it
+        </a>
+      </div>
     </aside>
   );
 }
