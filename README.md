@@ -6,6 +6,8 @@ The bot uses **LLM tool-calling** to query structured CV data, making it a real 
 
 **Open source and forkable.** Swap in your own data, deploy to Vercel, and you have your own AI-powered CV in minutes.
 
+<img width="1469" alt="CV Bot Screenshot" src="https://github.com/user-attachments/assets/1f85a61b-3f04-4dc0-865d-dc8f6bf6bb18" />
+
 ## How It Works
 
 ```
