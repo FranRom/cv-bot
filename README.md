@@ -98,6 +98,12 @@ The `__tests__/ai/tool-responses.test.ts` suite (21 tests) verifies the data pip
 
 These tests don't call the LLM (too slow and expensive for CI). Instead, they test the **data layer** — if the tools return bad data, the LLM will give bad answers regardless of prompt quality.
 
+### Tool Call Transparency
+
+When the bot processes a question, visitors can see exactly which tools are being called in real-time. A speech bubble appears next to the robot avatar showing labels like "Searching experience..." or "Checking skills..." with a spinner. This makes the agentic architecture visible — it's not a black box, you can see the reasoning steps happening.
+
+Completed tool calls also appear as checkmarks above the response in the chat, so you can see which data sources informed each answer.
+
 ### Tool Design
 
 Tools are designed to be **lean** — they return only filtered data, not the entire CV. This reduces token usage per response:
