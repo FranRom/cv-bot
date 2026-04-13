@@ -1,5 +1,5 @@
-import type { ChatConfig } from "./types.js";
-import { PROMPT_SECTIONS } from "./prompts.js";
+import type { ChatConfig } from "./types";
+import { PROMPT_SECTIONS } from "./prompts";
 
 export const TONE_MODIFIERS: Record<ChatConfig["tone"], string> = {
   professional:

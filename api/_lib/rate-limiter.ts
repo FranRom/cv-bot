@@ -1,4 +1,4 @@
-import type { RateLimitConfig } from "./types.js";
+import type { RateLimitConfig } from "./types";
 
 /**
  * In-memory rate limiter for the chat API.
