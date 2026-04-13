@@ -48,7 +48,7 @@ export function ToneSelector({ tone, onToneChange }: ToneSelectorProps) {
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-0 mb-2 p-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-lg min-w-[140px]">
+        <div style={{ backgroundColor: "#0f1729" }} className="absolute bottom-full left-0 mb-2 p-1.5 rounded-xl border border-[var(--color-border)] shadow-lg min-w-[140px]">
           {TONE_OPTIONS.map((option) => (
             <button
               key={option.value}

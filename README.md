@@ -57,10 +57,10 @@ All tools read from a single `cv-data.json` file — no database, no external AP
 - **Rate limiting** to protect your API budget (per-session + daily caps)
 - **Prompt caching** — Anthropic cache_control saves ~90% on repeat conversations
 - **Configurable LLM provider** — Claude, OpenAI, or Gemini
-- **Configurable tone** — professional, friendly, witty, or casual
+- **User-selectable tone** — visitors pick professional, friendly, witty, or casual from a popover in the chat input; persisted to localStorage and applied per-request
 - **Mobile responsive** — sidebar collapses into a drawer on small screens
 - **Dark theme** with CSS design tokens for easy customization
-- **Pre-commit hooks** — Husky runs all 114 tests before every commit
+- **Pre-commit hooks** — Husky runs all 121 tests before every commit
 - **CI/CD** — GitHub Actions runs tests + type-check on push/PR
 
 ## AI Engineering
@@ -164,7 +164,7 @@ Tools are designed to be **lean** — they return only filtered data, not the en
 | Backend | Vercel Serverless Functions (esbuild-bundled) |
 | Schema | Zod 4 |
 | Utilities | clsx + tailwind-merge (`cn()`), CSS design tokens |
-| Testing | Vitest, React Testing Library (114 tests) |
+| Testing | Vitest, React Testing Library (121 tests) |
 | CI/CD | GitHub Actions, Husky pre-commit hooks |
 
 ## Project Structure
@@ -198,8 +198,8 @@ cv-bot/
 ├── src/
 │   ├── components/
 │   │   ├── chat/                # ChatContainer, MessageBubble, ChatInput,
-│   │   │                        # RobotAvatar, ToolCallIndicator, ErrorFallback,
-│   │   │                        # TypingIndicator, SuggestedQuestions
+│   │   │                        # ToneSelector, RobotAvatar, ToolCallIndicator,
+│   │   │                        # ErrorFallback, TypingIndicator, SuggestedQuestions
 │   │   ├── sidebar/             # Sidebar, ProfileCard, SkillsTags, ExternalLinks
 │   │   └── layout/              # AppLayout (responsive grid + mobile drawer)
 │   ├── hooks/
@@ -276,7 +276,7 @@ Your CV data. Structured into sections:
 |---|---|---|
 | `llm.provider` | `"anthropic"`, `"openai"`, `"google"` | Which LLM to use |
 | `llm.model` | Any model ID | e.g., `"claude-haiku-4-5-20251001"` |
-| `chat.tone` | `"professional"`, `"friendly"`, `"witty"`, `"casual"` | Bot personality |
+| `chat.tone` | `"professional"`, `"friendly"`, `"witty"`, `"casual"` | Default tone (visitors can override via UI) |
 | `chat.welcomeMessage` | Any string | Shown on the landing screen |
 | `chat.suggestedQuestions` | Array of strings | Clickable question chips |
 | `rateLimit.maxMessagesPerSession` | Number | Per-visitor message cap |
@@ -302,7 +302,7 @@ GOOGLE_GENERATIVE_AI_API_KEY=...
 | `npm run build:vercel` | Full Vercel build (frontend + esbuild-bundled API) |
 | `npm run preview` | Preview production build |
 | `npm test` | Run tests in watch mode |
-| `npm run test:run` | Run tests once (114 tests) |
+| `npm run test:run` | Run tests once (121 tests) |
 
 ## Security
 
