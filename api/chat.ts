@@ -4,6 +4,7 @@ import { buildSystemPrompt } from "../server/system-prompt";
 import { getModel } from "../server/provider";
 import { RateLimiter } from "../server/rate-limiter";
 import { checkInput } from "../server/guard-rails";
+import { detectSkill } from "../server/skill-router";
 import cvData from "../data/cv-data.json";
 import config from "../data/config.json";
 import type { CvData, Config } from "../src/lib/types";
@@ -144,6 +145,21 @@ export default async function handler(req: Request) {
     }
   }
 
+  // Skill routing: detect intent and augment system prompt
+  const lastUserText =
+    lastMsg?.role === "user"
+      ? (lastMsg.content ??
+          lastMsg.parts
+            ?.filter((p) => p.type === "text")
+            .map((p) => p.text)
+            .join("") ??
+          "")
+      : "";
+  const skill = detectSkill(lastUserText, typedCvData.profile.name);
+  const augmentedPrompt = skill
+    ? `${systemPrompt}\n\n${skill.prompt}`
+    : systemPrompt;
+
   const modelMessages = await convertToModelMessages(messages.slice(-10));
 
   try {
@@ -151,7 +167,7 @@ export default async function handler(req: Request) {
       model: getModel(typedConfig.llm),
       system: {
         role: "system" as const,
-        content: systemPrompt,
+        content: augmentedPrompt,
         providerOptions: {
           anthropic: { cacheControl: { type: "ephemeral" } },
         },

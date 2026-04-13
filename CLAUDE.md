@@ -17,6 +17,8 @@ AI-powered CV chatbot using React 19, TypeScript, Vercel AI SDK, and Anthropic C
 | `data/cv-data.json` | All CV data — profile, experience, skills, projects, etc. |
 | `data/config.json` | LLM provider, tone, rate limits, theme |
 | `prompts/*.md` | System prompt components — personality, boundaries, examples |
+| `prompts/skills/*.md` | Skill prompts — elevator-pitch, job-match, deep-dive, interview |
+| `server/skill-router.ts` | Intent detection → skill prompt routing |
 | `server/tools.ts` | Tool definitions the LLM can call |
 | `server/cv-data.ts` | Query functions that tools execute |
 | `server/system-prompt.ts` | Composes prompt files into final system prompt |

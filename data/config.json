@@ -15,7 +15,8 @@
       "Tell me about his Web3 experience",
       "What has he built with AI?",
       "Show me his DeFi projects",
-      "How was this bot built?"
+      "How was this bot built?",
+      "What interview questions should I ask Fran?"
     ]
   },
   "rateLimit": {

@@ -98,6 +98,21 @@ The `__tests__/ai/tool-responses.test.ts` suite (21 tests) verifies the data pip
 
 These tests don't call the LLM (too slow and expensive for CI). Instead, they test the **data layer** — if the tools return bad data, the LLM will give bad answers regardless of prompt quality.
 
+### Skill-Based Prompt Routing
+
+Beyond simple Q&A, the bot detects user intent and activates specialized **skills** — higher-level conversation patterns that augment the system prompt with task-specific instructions:
+
+| Skill | Trigger examples | What it does |
+|---|---|---|
+| **Elevator Pitch** | "Who is [name]?", "Give me a summary" | Composes a compelling narrative from profile + experience + skills |
+| **Job Match** | "How does [name] fit this role?" | Analyzes strong matches, transferable skills, and growth areas |
+| **Technical Deep Dive** | "Most complex project?", "Walk me through the architecture" | Guides through problem → approach → trade-offs → outcome |
+| **Interview Questions** | "What should I ask [name]?" | Generates tailored questions based on actual experience |
+
+Skills live as markdown files in `prompts/skills/` — the router detects keywords in the user's message and appends the skill prompt to the system prompt for that request only. Regular questions bypass the skill system entirely.
+
+This is a form of **prompt routing** — a common pattern in production AI systems where different intents get different instructions.
+
 ### Tool Call Transparency
 
 When the bot processes a question, visitors can see exactly which tools are being called in real-time. A speech bubble appears next to the robot avatar showing labels like "Searching experience..." or "Checking skills..." with a spinner. This makes the agentic architecture visible — it's not a black box, you can see the reasoning steps happening.
