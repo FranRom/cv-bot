@@ -1,13 +1,13 @@
 import { streamText, convertToModelMessages, stepCountIs } from "ai";
-import { createTools } from "../server/tools";
-import { buildSystemPrompt } from "../server/system-prompt";
-import { getModel } from "../server/provider";
-import { RateLimiter } from "../server/rate-limiter";
-import { checkInput } from "../server/guard-rails";
-import { detectSkill } from "../server/skill-router";
+import { createTools } from "./_lib/tools";
+import { buildSystemPrompt } from "./_lib/system-prompt";
+import { getModel } from "./_lib/provider";
+import { RateLimiter } from "./_lib/rate-limiter";
+import { checkInput } from "./_lib/guard-rails";
+import { detectSkill } from "./_lib/skill-router";
 import cvData from "../data/cv-data.json";
 import config from "../data/config.json";
-import type { CvData, Config } from "../src/lib/types";
+import type { CvData, Config } from "./_lib/types";
 
 export const runtime = "edge";
 
