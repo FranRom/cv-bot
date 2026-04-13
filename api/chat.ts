@@ -9,8 +9,6 @@ import cvData from "../data/cv-data.json";
 import config from "../data/config.json";
 import type { CvData, Config } from "./_lib/types";
 
-export const runtime = "edge";
-
 const typedCvData = cvData as CvData;
 const typedConfig = config as Config;
 const rateLimiter = new RateLimiter(typedConfig.rateLimit);
