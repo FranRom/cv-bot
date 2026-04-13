@@ -9,6 +9,7 @@ import {
   getEducation,
   filterByTechnology,
   getContact,
+  getInterests,
 } from "./cv-data";
 
 export function createTools(data: CvData) {
@@ -64,6 +65,13 @@ export function createTools(data: CvData) {
         "Get contact information (email, github, linkedin, website)",
       inputSchema: z.object({}),
       execute: async () => getContact(data),
+    }),
+
+    get_interests: tool({
+      description:
+        "Get personal interests and hobbies outside of work (music, nature, sports, wellness, social)",
+      inputSchema: z.object({}),
+      execute: async () => getInterests(data),
     }),
   };
 }

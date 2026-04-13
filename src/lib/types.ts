@@ -59,6 +59,11 @@ export interface Availability {
   notice_period: string;
 }
 
+export interface Interest {
+  category: string;
+  items: string[];
+}
+
 export interface CvData {
   profile: Profile;
   experience: Experience[];
@@ -66,6 +71,7 @@ export interface CvData {
   projects: Project[];
   education: Education[];
   languages: Language[];
+  interests: Interest[];
   availability: Availability;
 }
 

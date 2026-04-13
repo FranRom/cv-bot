@@ -9,7 +9,7 @@ export function MessageBubble({ role, content }: MessageBubbleProps) {
   if (role === "user") {
     return (
       <div className="flex justify-end">
-        <p className="max-w-[80%] rounded-2xl rounded-br-sm px-4 py-2.5 text-sm bg-blue-600 text-white">
+        <p className="max-w-[75%] rounded-2xl rounded-br-sm px-4 py-2.5 text-sm bg-white/10 text-gray-100">
           {content}
         </p>
       </div>
@@ -17,8 +17,13 @@ export function MessageBubble({ role, content }: MessageBubbleProps) {
   }
 
   return (
-    <div className="flex justify-start">
-      <div className="max-w-[80%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm bg-white/5 text-gray-200 border border-white/10 prose prose-invert prose-sm">
+    <div className="flex items-start gap-3">
+      <img
+        src="/avatar.jpg"
+        alt="Fran"
+        className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 ring-1 ring-white/10"
+      />
+      <div className="max-w-[80%] rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm bg-white/5 text-gray-200">
         <ReactMarkdown
           components={{
             p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,

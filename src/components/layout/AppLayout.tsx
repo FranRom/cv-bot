@@ -1,14 +1,15 @@
 import { useState } from "react";
 import Sidebar from "../sidebar/Sidebar";
-import type { Profile, Skills } from "../../lib/types";
+import type { Profile, Skills, Interest } from "../../lib/types";
 
 interface AppLayoutProps {
   profile: Profile;
   skills: Skills;
+  interests: Interest[];
   children: React.ReactNode;
 }
 
-export function AppLayout({ profile, skills, children }: AppLayoutProps) {
+export function AppLayout({ profile, skills, interests, children }: AppLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -25,7 +26,7 @@ export function AppLayout({ profile, skills, children }: AppLayoutProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Sidebar profile={profile} skills={skills} />
+        <Sidebar profile={profile} skills={skills} interests={interests} />
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">

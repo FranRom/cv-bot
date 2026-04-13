@@ -228,6 +228,24 @@
     { "language": "Spanish", "level": "native" },
     { "language": "English", "level": "fluent" }
   ],
+  "interests": [
+    {
+      "category": "Music & Culture",
+      "items": ["Live music and concerts"]
+    },
+    {
+      "category": "Nature & Science",
+      "items": ["Biology", "Plants", "Animals", "The natural world"]
+    },
+    {
+      "category": "Sports & Wellness",
+      "items": ["Padel", "Cycling", "Gym", "Meditation"]
+    },
+    {
+      "category": "Social",
+      "items": ["Building meaningful connections", "Community"]
+    }
+  ],
   "availability": {
     "status": "actively looking",
     "roles": ["Frontend Lead Engineer", "Senior Frontend Engineer", "Web3 Frontend Engineer", "AI Frontend Engineer", "Agentic Frontend Engineer"],

@@ -7,7 +7,7 @@ const typedCvData = cvData as CvData;
 
 function App() {
   return (
-    <AppLayout profile={typedCvData.profile} skills={typedCvData.skills}>
+    <AppLayout profile={typedCvData.profile} skills={typedCvData.skills} interests={typedCvData.interests}>
       <ChatContainer />
     </AppLayout>
   );

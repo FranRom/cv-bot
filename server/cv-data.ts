@@ -83,3 +83,7 @@ export function getContact(
   const { email, github, linkedin, website } = data.profile.links;
   return { email, github, linkedin, website };
 }
+
+export function getInterests(data: CvData) {
+  return data.interests;
+}
