@@ -28,7 +28,7 @@ export default function ExternalLinks({ links }: Props) {
             key={key}
             href={href}
             {...(!isEmail && { target: "_blank", rel: "noopener noreferrer" })}
-            className="text-sm text-gray-400 hover:text-white transition-colors"
+            className="text-sm text-[var(--color-text-muted)] hover:text-white transition-colors"
           >
             {label}
           </a>

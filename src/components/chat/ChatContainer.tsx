@@ -1,5 +1,4 @@
-import { useChat } from "@ai-sdk/react";
-import { useState, useEffect, useRef } from "react";
+import { useCvChat } from "../../hooks/useCvChat";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
 import { TypingIndicator } from "./TypingIndicator";
@@ -9,199 +8,187 @@ import { SuggestedQuestions } from "./SuggestedQuestions";
 import { ErrorFallback } from "./ErrorFallback";
 import { config } from "../../lib/config";
 
-interface MessagePart {
-  type: string;
-  text?: string;
-  toolInvocation?: {
-    toolName: string;
-    state: string;
-  };
+function AvatarWithToolBubble({
+  isStreaming,
+  toolNames,
+}: {
+  isStreaming: boolean;
+  toolNames: string[];
+}) {
+  return (
+    <div className="relative flex items-center justify-center pt-4 pb-2 flex-shrink-0">
+      <RobotAvatar isTalking={isStreaming} size="w-32 h-32" />
+      {isStreaming && (
+        <div className="absolute left-[calc(50%+72px)] top-1/2 -translate-y-1/2">
+          <div className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2">
+            <div className="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[10px] border-r-[var(--color-border)]" />
+          </div>
+          <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] px-4 py-2.5 text-sm whitespace-nowrap">
+            {toolNames.length > 0 ? (
+              <div className="flex flex-col gap-1">
+                {toolNames.map((name, i) => (
+                  <ToolCallIndicator key={i} toolName={name} state="calling" />
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Composing response...
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-function getTextContent(message: { parts: MessagePart[] }): string {
-  return message.parts
-    .filter((p): p is MessagePart & { text: string } => p.type === "text")
-    .map((p) => p.text)
-    .join("");
+function WelcomeScreen({
+  onSelect,
+}: {
+  onSelect: (question: string) => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
+      <RobotAvatar isTalking={false} size="w-40 h-40" />
+      <div className="text-center max-w-md">
+        <p className="text-[var(--color-text-primary)] text-2xl font-semibold">
+          {config.chat.welcomeMessage}
+        </p>
+      </div>
+      <SuggestedQuestions
+        questions={config.chat.suggestedQuestions}
+        onSelect={onSelect}
+      />
+    </div>
+  );
 }
 
-function getToolCalls(message: { parts: MessagePart[] }) {
-  return message.parts
-    .filter((p) => p.type.startsWith("tool-"))
-    .map((p) => p.type.replace("tool-", ""));
+function MessageList({
+  messages,
+  isLoading,
+}: {
+  messages: Array<{
+    id: string;
+    role: "user" | "assistant";
+    text: string;
+    toolNames: string[];
+  }>;
+  isLoading: boolean;
+}) {
+  const lastIsUser =
+    messages.length > 0 && messages[messages.length - 1].role === "user";
+
+  return (
+    <>
+      {messages.map((message) => {
+        if (message.role === "user") {
+          return (
+            <MessageBubble
+              key={message.id}
+              role="user"
+              content={message.text}
+            />
+          );
+        }
+
+        return (
+          <div key={message.id} className="space-y-1">
+            {message.toolNames.map((name, i) => (
+              <ToolCallIndicator
+                key={`${message.id}-tool-${i}`}
+                toolName={name}
+                state="result"
+              />
+            ))}
+            {message.text && (
+              <MessageBubble role="assistant" content={message.text} />
+            )}
+          </div>
+        );
+      })}
+
+      {isLoading && lastIsUser && <TypingIndicator />}
+    </>
+  );
 }
 
 export function ChatContainer() {
-  const { messages, sendMessage, status, setMessages, error, clearError } = useChat();
-
-  const [input, setInput] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const isLoading = status === "submitted" || status === "streaming";
-  const isStreaming = status === "streaming";
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const handleSubmit = () => {
-    if (!input.trim()) return;
-    sendMessage({ text: input });
-    setInput("");
-  };
-
-  const handleSuggestedQuestion = (question: string) => {
-    sendMessage({ text: question });
-  };
-
-  const hasMessages = messages.length > 0;
-
-  // Get active tool calls from the last assistant message for the avatar status
-  const lastMessage = messages[messages.length - 1];
-  const activeToolNames =
-    lastMessage?.role === "assistant" ? getToolCalls(lastMessage) : [];
+  const {
+    input,
+    setInput,
+    processedMessages,
+    hasMessages,
+    isLoading,
+    isStreaming,
+    activeToolNames,
+    error,
+    messagesEndRef,
+    handleSubmit,
+    handleSuggestedQuestion,
+    handleClear,
+    handleRetry,
+  } = useCvChat();
 
   return (
     <div className="flex h-full">
       {/* Main chat column */}
       <div className="flex-1 flex flex-col h-full min-w-0">
-      {hasMessages && (
-        <div className="relative flex items-center justify-center pt-4 pb-2 flex-shrink-0">
-          <RobotAvatar isTalking={isStreaming} size="w-32 h-32" />
-          {isStreaming && (
-            <div className="absolute left-[calc(50%+72px)] top-1/2 -translate-y-1/2">
-              {/* Arrow pointing left toward the avatar */}
-              <div className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2">
-                <div className="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[10px] border-r-white/10" />
-              </div>
-              <div className="rounded-2xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm whitespace-nowrap">
-                {activeToolNames.length > 0 ? (
-                  <div className="flex flex-col gap-1">
-                    {activeToolNames.map((name, i) => (
-                      <ToolCallIndicator
-                        key={`avatar-tool-${i}`}
-                        toolName={name}
-                        state="calling"
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400">Composing response...</p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="flex-1 overflow-y-auto py-4">
-        <div className="max-w-4xl mx-auto px-6 space-y-4">
-          {!hasMessages && (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-              <RobotAvatar isTalking={false} size="w-40 h-40" />
-              <div className="text-center max-w-md">
-                <p className="text-gray-200 text-2xl font-semibold">
-                  {config.chat.welcomeMessage}
-                </p>
-              </div>
-              <SuggestedQuestions
-                questions={config.chat.suggestedQuestions}
-                onSelect={handleSuggestedQuestion}
-              />
-            </div>
-          )}
-
-          {messages.map((message) => {
-            if (message.role === "user") {
-              const text = getTextContent(message);
-              if (!text) return null;
-              return (
-                <MessageBubble key={message.id} role="user" content={text} />
-              );
-            }
-
-            if (message.role === "assistant") {
-              const text = getTextContent(message);
-              const toolNames = getToolCalls(message);
-
-              return (
-                <div key={message.id} className="space-y-1">
-                  {toolNames.map((name, i) => (
-                    <ToolCallIndicator
-                      key={`${message.id}-tool-${i}`}
-                      toolName={name}
-                      state="result"
-                    />
-                  ))}
-                  {text && <MessageBubble role="assistant" content={text} />}
-                </div>
-              );
-            }
-
-            return null;
-          })}
-
-          {isLoading &&
-            messages.length > 0 &&
-            messages[messages.length - 1].role === "user" && (
-              <TypingIndicator />
-            )}
-
-          {error && (
-            <ErrorFallback
-              error={error}
-              onRetry={() => {
-                clearError();
-                const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
-                if (lastUserMsg) {
-                  const text = getTextContent(lastUserMsg);
-                  if (text) sendMessage({ text });
-                }
-              }}
-            />
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto w-full">
         {hasMessages && (
-          <div className="flex justify-center py-1">
-            <button
-              onClick={() => setMessages([])}
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-            >
-              Clear chat
-            </button>
-          </div>
+          <AvatarWithToolBubble
+            isStreaming={isStreaming}
+            toolNames={activeToolNames}
+          />
         )}
 
-        <ChatInput
-          value={input}
-          onChange={setInput}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-        />
-      </div>
-      </div> {/* end main chat column */}
+        <div className="flex-1 overflow-y-auto py-4">
+          <div className="max-w-4xl mx-auto px-6 space-y-4">
+            {!hasMessages && (
+              <WelcomeScreen onSelect={handleSuggestedQuestion} />
+            )}
 
-      {/* Right sidebar — suggested questions, visible during conversation */}
+            <MessageList
+              messages={processedMessages}
+              isLoading={isLoading}
+            />
+
+            {error && <ErrorFallback error={error} onRetry={handleRetry} />}
+
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto w-full">
+          {hasMessages && (
+            <div className="flex justify-center py-1">
+              <button
+                onClick={handleClear}
+                className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors"
+              >
+                Clear chat
+              </button>
+            </div>
+          )}
+
+          <ChatInput
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
+
+      {/* Right sidebar — suggested questions during conversation */}
       {hasMessages && (
-        <div className="hidden lg:flex w-72 flex-col border-l border-white/10 bg-white/5 p-4 overflow-y-auto">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+        <div className="hidden lg:flex w-72 flex-col border-l border-[var(--color-border)] bg-[var(--color-surface)] p-4 overflow-y-auto">
+          <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider mb-3">
             Suggested Questions
           </p>
-          <div className="flex flex-col gap-2">
-            {config.chat.suggestedQuestions.map((question) => (
-              <button
-                key={question}
-                onClick={() => handleSuggestedQuestion(question)}
-                className="text-left px-3 py-2 text-xs text-gray-400 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-gray-300 transition-colors"
-              >
-                {question}
-              </button>
-            ))}
-          </div>
+          <SuggestedQuestions
+            questions={config.chat.suggestedQuestions}
+            onSelect={handleSuggestedQuestion}
+            layout="vertical"
+          />
         </div>
       )}
     </div>
