@@ -5,7 +5,7 @@ const FUNC_DIR = ".vercel/output/functions/api/chat.func";
 
 // Bundle the API function into a single file
 await build({
-  entryPoints: ["api/chat.ts"],
+  entryPoints: ["functions-src/chat.ts"],
   bundle: true,
   platform: "node",
   target: "node20",

@@ -39,7 +39,7 @@ export function apiDevPlugin(): Plugin {
           );
 
           // Load the handler through Vite's SSR module system
-          const mod = await server.ssrLoadModule("/api/chat.ts");
+          const mod = await server.ssrLoadModule("/functions-src/chat.ts");
           const handler = mod.default;
           const webResponse: Response = await handler(webRequest);
 
