@@ -1,5 +1,4 @@
-import { readFileSync } from "fs";
-import { join } from "path";
+import { SKILL_PROMPTS } from "../prompts/skills";
 
 /**
  * Skill Router — detects user intent and returns the appropriate skill prompt.
@@ -8,20 +7,18 @@ import { join } from "path";
  * with specialized instructions. Unlike tools (which retrieve data), skills
  * guide how the LLM reasons about and presents the data.
  *
- * Pattern: keyword matching on the last user message → load skill markdown →
+ * Pattern: keyword matching on the last user message → select skill prompt →
  * append to system prompt for that request only.
  */
 
-interface Skill {
+interface SkillDef {
   name: string;
-  file: string;
   patterns: RegExp[];
 }
 
-const SKILLS: Skill[] = [
+const SKILLS: SkillDef[] = [
   {
     name: "elevator-pitch",
-    file: "elevator-pitch.md",
     patterns: [
       /\b(pitch|summary|summarize|overview|who is|tell me about (him|her|fran|yourself)|introduce)\b/i,
       /\b(quick|brief|short)\s+(summary|intro|description|overview)\b/i,
@@ -30,7 +27,6 @@ const SKILLS: Skill[] = [
   },
   {
     name: "job-match",
-    file: "job-match.md",
     patterns: [
       /\b(match|fit|suitable|qualified|good for|right for)\b.*\b(role|job|position|team)\b/i,
       /\b(role|job|position)\b.*\b(match|fit|suitable)\b/i,
@@ -40,7 +36,6 @@ const SKILLS: Skill[] = [
   },
   {
     name: "technical-deep-dive",
-    file: "technical-deep-dive.md",
     patterns: [
       /\b(deep\s*dive|technical\s*detail|architecture|how\s+did\s+(he|fran)\s+build)\b/i,
       /\b(most\s+complex|hardest|biggest|most\s+challenging)\s+\w*\s*(project|feature|problem|challenge)\b/i,
@@ -49,7 +44,6 @@ const SKILLS: Skill[] = [
   },
   {
     name: "interview-questions",
-    file: "interview-questions.md",
     patterns: [
       /\b(interview\s+questions?|what\s+(should|could|would)\s+I\s+ask)\b/i,
       /\b(questions?\s+(to|for)\s+ask)\b/i,
@@ -57,12 +51,6 @@ const SKILLS: Skill[] = [
     ],
   },
 ];
-
-function loadSkillFile(filename: string, ownerName: string): string {
-  const skillsDir = join(process.cwd(), "prompts", "skills");
-  const content = readFileSync(join(skillsDir, filename), "utf-8").trim();
-  return content.replaceAll("{{ownerName}}", ownerName);
-}
 
 export interface SkillMatch {
   name: string;
@@ -80,9 +68,11 @@ export function detectSkill(
   for (const skill of SKILLS) {
     for (const pattern of skill.patterns) {
       if (pattern.test(message)) {
+        const template = SKILL_PROMPTS[skill.name];
+        if (!template) return null;
         return {
           name: skill.name,
-          prompt: loadSkillFile(skill.file, ownerName),
+          prompt: template.replaceAll("{{ownerName}}", ownerName),
         };
       }
     }

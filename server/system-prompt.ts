@@ -1,6 +1,5 @@
-import { readFileSync } from "fs";
-import { join } from "path";
 import type { ChatConfig } from "../src/lib/types";
+import { PROMPT_SECTIONS } from "../prompts";
 
 export const TONE_MODIFIERS: Record<ChatConfig["tone"], string> = {
   professional:
@@ -13,19 +12,6 @@ export const TONE_MODIFIERS: Record<ChatConfig["tone"], string> = {
     "Be casual and relaxed. Use informal language, contractions, and a laid-back tone. Keep it natural.",
 };
 
-const PROMPT_FILES = [
-  "personality.md",
-  "boundaries.md",
-  "inference-rules.md",
-  "response-style.md",
-  "examples.md",
-];
-
-function loadPromptFile(filename: string): string {
-  const promptsDir = join(process.cwd(), "prompts");
-  return readFileSync(join(promptsDir, filename), "utf-8").trim();
-}
-
 function interpolate(template: string, vars: Record<string, string>): string {
   return Object.entries(vars).reduce(
     (result, [key, value]) => result.replaceAll(`{{${key}}}`, value),
@@ -33,7 +19,7 @@ function interpolate(template: string, vars: Record<string, string>): string {
   );
 }
 
-// Cache the composed prompt since the files don't change at runtime
+// Cache the composed prompt since it never changes at runtime
 let cachedPrompt: string | null = null;
 let cachedOwnerName: string | null = null;
 
@@ -41,13 +27,11 @@ export function buildSystemPrompt(
   ownerName: string,
   chat: ChatConfig
 ): string {
-  // Only recompose if owner name changed (shouldn't happen, but defensive)
   if (!cachedPrompt || cachedOwnerName !== ownerName) {
     const vars = { ownerName };
-    const sections = PROMPT_FILES.map((file) =>
-      interpolate(loadPromptFile(file), vars)
-    );
-    cachedPrompt = sections.join("\n\n");
+    cachedPrompt = PROMPT_SECTIONS.map((section) =>
+      interpolate(section, vars)
+    ).join("\n\n");
     cachedOwnerName = ownerName;
   }
 
