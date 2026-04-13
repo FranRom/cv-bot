@@ -82,10 +82,6 @@ export default async function handler(req: Request) {
       stopWhen: stepCountIs(3),
       maxOutputTokens: typedConfig.llm.maxTokens,
       temperature: typedConfig.llm.temperature,
-      // Enable cache_control on tool definitions too
-      providerOptions: {
-        anthropic: { cacheControl: true },
-      },
     });
 
     return result.toUIMessageStreamResponse();

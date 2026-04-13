@@ -54,6 +54,58 @@ All tools read from a single `cv-data.json` file — no database, no external AP
 - **Mobile responsive** — sidebar collapses into a drawer on small screens
 - **Dark theme** with customizable accent color
 
+## AI Engineering
+
+This isn't just an LLM wrapper. The project implements production AI best practices:
+
+### Structured Prompt Architecture
+
+The system prompt is composed from modular markdown files rather than hardcoded strings:
+
+```
+prompts/
+├── personality.md        # Voice, identity, behavior
+├── boundaries.md         # What to answer, what to refuse, off-limits topics
+├── inference-rules.md    # How to handle skill gaps and make inferences
+├── response-style.md     # Formatting, length, follow-up guidance
+└── examples.md           # Few-shot examples of ideal responses
+```
+
+Each file uses `{{ownerName}}` template variables, interpolated at runtime. This makes prompts **testable**, **version-controlled**, and **independently editable** — you can tweak the bot's personality without touching code.
+
+The prompt builder caches the composed result in memory since the files don't change at runtime.
+
+### Prompt Caching (Anthropic)
+
+The system prompt is marked with `cache_control: { type: "ephemeral" }`, which tells Anthropic to cache it across requests within a 5-minute window. Since the system prompt + tool definitions are identical for every request, this saves **~90% on input tokens** for repeat conversations.
+
+Other providers (OpenAI, Google) ignore this field gracefully — no code branching needed.
+
+### Few-Shot Examples
+
+The `prompts/examples.md` file contains example question-answer pairs that guide the LLM's response quality and style. This is more effective than verbose instructions — the model learns the expected pattern from concrete examples.
+
+### AI Response Evaluation Tests
+
+The `__tests__/ai/tool-responses.test.ts` suite (21 tests) verifies the data pipeline that feeds the LLM:
+
+- Profile returns correct name, title, and links
+- Experience entries have all required fields
+- Skills include key technologies recruiters search for
+- Technology filter works cross-cutting (experience + projects + skills)
+- Crypto experience data is accurate (chains, wallet, activities)
+- System prompt contains boundary rules, inference rules, and few-shot examples
+
+These tests don't call the LLM (too slow and expensive for CI). Instead, they test the **data layer** — if the tools return bad data, the LLM will give bad answers regardless of prompt quality.
+
+### Tool Design
+
+Tools are designed to be **lean** — they return only filtered data, not the entire CV. This reduces token usage per response:
+
+- `get_skills({ category: "web3" })` returns only Web3 skills, not all categories
+- `filter_by_technology("React")` returns only matching experience and projects
+- The LLM decides which tools to call based on the question — no wasted data
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -73,9 +125,15 @@ cv-bot/
 ├── data/
 │   ├── cv-data.json             # Your CV data (edit this)
 │   └── config.json              # App config (provider, tone, rate limits, theme)
+├── prompts/                     # Composable system prompt files
+│   ├── personality.md           # Voice, identity, behavior
+│   ├── boundaries.md            # Scope, off-limits topics
+│   ├── inference-rules.md       # Skill gap handling, inferences
+│   ├── response-style.md        # Formatting and length guidelines
+│   └── examples.md              # Few-shot examples for response quality
 ├── server/
 │   ├── tools.ts                 # LLM tool definitions (Zod schemas + executors)
-│   ├── system-prompt.ts         # System prompt builder with tone modifiers
+│   ├── system-prompt.ts         # Prompt composer — loads and interpolates prompt files
 │   ├── provider.ts              # Multi-provider LLM router
 │   ├── rate-limiter.ts          # IP-based rate limiting
 │   ├── cv-data.ts               # CV data query functions
@@ -94,7 +152,10 @@ cv-bot/
 ├── public/
 │   ├── avatar.jpg               # Your profile photo
 │   └── robot-*.png              # Robot avatar frames (idle, talking)
-└── __tests__/                   # Unit tests for server logic + components
+└── __tests__/
+    ├── ai/                      # AI response evaluation tests (21 tests)
+    ├── server/                  # Server logic unit tests
+    └── components/              # React component tests
 ```
 
 ## Make Your Own
@@ -196,6 +257,7 @@ Running this costs very little:
 
 - **Vercel hosting**: Free (Hobby tier)
 - **LLM API**: ~$0.01-0.05 per conversation with Claude Haiku
+- **Prompt caching**: Saves ~90% on input tokens for repeat conversations within 5 minutes
 - **Estimated monthly**: $3-15 for moderate traffic (10-20 visitors/day)
 
 Rate limiting in `config.json` lets you cap your daily spend.
