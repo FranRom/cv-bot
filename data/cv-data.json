@@ -24,7 +24,7 @@
         "Architected and developed Web3 tools and prototypes using Next.js, Vite, wagmi, and viem — including crypto games, game developer tooling, and onchain dashboards",
         "Integrated AI-powered features to improve dapp usability: natural language interfaces, AI agents, and in-app action execution via chat"
       ],
-      "technologies": ["Next.js", "Vite", "TypeScript", "React", "wagmi", "viem", "AI Agents", "Web3", "Vitest", "Storybook", "AI Agents", "Cloudflare"]
+      "technologies": ["Next.js", "Vite", "TypeScript", "React", "Zustand", "wagmi", "viem", "AI Agents", "Web3", "Vitest", "Cypress", "Playwright", "Storybook", "Cloudflare"]
     },
     {
       "company": "BeInCrypto",
@@ -41,13 +41,15 @@
       "company": "Elixir.app",
       "role": "Web3 Frontend Engineer",
       "period": "Dec 2021 - Jul 2022",
-      "description": "Built dapps and NFT collections across EVM and Solana ecosystems.",
+      "description": "Built multi-chain dapps across EVM and Solana — game launchers, dashboards, and a Web3 launchpad.",
       "highlights": [
-        "NFT collection development on EVM & Solana",
-        "Dapps development with NFTs, gaming, staking, and farming features",
-        "DeFi platform development"
+        "Built a game launcher embedded with Electron and game dashboards for managing tokens and NFTs across EVM and Solana",
+        "Developed a Web3 launchpad with multi-chain wallet connections",
+        "NFT collection minting interfaces on both EVM and Solana",
+        "Implemented staking, farming, and DeFi features with multi-chain support",
+        "Handled multi-chain wallet connections across all products"
       ],
-      "technologies": ["web3.js", "ethers.js", "Infura", "React", "TypeScript", "GraphQL", "Solana", "wagmi", "viem", "Electron", "DeFi"]
+      "technologies": ["web3.js", "ethers.js", "wagmi", "viem", "Infura", "React", "Electron", "TypeScript", "GraphQL", "Solana", "EVM", "DeFi"]
     },
     {
       "company": "Woonkly",
@@ -64,13 +66,14 @@
       "company": "Ballena.io",
       "role": "Web3 Frontend Lead Engineer",
       "period": "Oct 2020 - 2022",
-      "description": "Led frontend development for a DAO building Yield DeFi projects.",
+      "description": "Co-founded and led frontend development for a DAO building Yield DeFi projects. Reached $1M in Total Value Locked on mainnet.",
       "highlights": [
-        "Created two different Yield DeFi projects for a DAO",
-        "Used coding standards from Pancakeswap and Beefy",
-        "Successfully deployed to mainnet"
+        "Built two Yield DeFi platforms for a DAO, reaching $1M TVL on mainnet",
+        "Ran the project for 2 years as frontend lead and DAO contributor",
+        "Used coding standards from Pancakeswap and Beefy for vault architecture",
+        "Hands-on with smart contract interaction, staking mechanics, and yield strategies"
       ],
-      "technologies": ["Web3", "React", "TypeScript", "DeFi"]
+      "technologies": ["Web3", "React", "TypeScript", "DeFi", "Solidity", "EVM"]
     },
     {
       "company": "Lingokids",
@@ -98,7 +101,7 @@
         "Created and maintained components library with Storybooks",
         "Agile SCRUM methodology"
       ],
-      "technologies": ["React", "GraphQL", "Apollo Client", "Jest", "Node.js", "Docker", "Styled Components"]
+      "technologies": ["React", "GraphQL", "Apollo Client", "Jest", "Cypress", "Node.js", "Docker", "Styled Components"]
     },
     {
       "company": "Weeboo",
@@ -123,6 +126,9 @@
       { "name": "Vite", "level": "advanced" },
       { "name": "Tailwind CSS", "level": "advanced" },
       { "name": "GraphQL", "level": "advanced" },
+      { "name": "Redux", "level": "advanced" },
+      { "name": "Zustand", "level": "advanced" },
+      { "name": "Electron", "level": "intermediate" },
       { "name": "Styled Components", "level": "advanced" }
     ],
     "web3": [
@@ -153,6 +159,8 @@
       { "name": "Jest", "level": "advanced" },
       { "name": "Vitest", "level": "advanced" },
       { "name": "Storybook", "level": "advanced" },
+      { "name": "Cypress", "level": "advanced" },
+      { "name": "Playwright", "level": "intermediate" },
       { "name": "Agile/SCRUM", "level": "advanced" },
       { "name": "Figma", "level": "intermediate" }
     ]
@@ -228,6 +236,28 @@
     { "language": "Spanish", "level": "native" },
     { "language": "English", "level": "fluent" }
   ],
+  "cryptoExperience": {
+    "since": "2017",
+    "summary": "Active crypto user since 2017. Started by buying first tokens and exploring the technology, then went deep — co-creating a DeFi yield platform for a DAO that reached $1M TVL on mainnet. Uses a Trezor hardware wallet for long-term holdings since 2020. Regularly bridges assets cross-chain and believes interoperability is one of the most important challenges in the blockchain space.",
+    "chains": ["Bitcoin", "Ethereum", "Polygon", "Arbitrum", "Optimism", "BSC", "Solana"],
+    "activities": [
+      "Bought first crypto in 2017",
+      "Co-created Ballena.io DeFi platform reaching $1M TVL (2020-2022)",
+      "Uses Trezor hardware wallet since 2020 for long-term self-custody",
+      "Regularly bridges assets cross-chain (Across Protocol and similar bridges)",
+      "Has staked, farmed, and provided liquidity on multiple chains",
+      "Built NFT collections, staking UIs, and farming interfaces professionally",
+      "Active participant in DAO governance"
+    ],
+    "hardware_wallet": "Trezor (since 2020)",
+    "opinions": [
+      "Interoperability and cross-chain bridging are essential for blockchain adoption",
+      "Self-custody is non-negotiable — hardware wallets are the gold standard for securing assets",
+      "Good wallet UX matters enormously — most wallets still make simple tasks feel complex",
+      "EVM and Solana are fundamentally different: EVM's account model vs Solana's program model changes how you think about state, transactions, and wallet interactions",
+      "Open source is the backbone of crypto — trust requires transparency"
+    ]
+  },
   "interests": [
     {
       "category": "Music & Culture",

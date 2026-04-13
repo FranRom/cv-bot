@@ -10,6 +10,7 @@ import {
   filterByTechnology,
   getContact,
   getInterests,
+  getCryptoExperience,
 } from "./cv-data";
 
 export function createTools(data: CvData) {
@@ -72,6 +73,13 @@ export function createTools(data: CvData) {
         "Get personal interests and hobbies outside of work (music, nature, sports, wellness, social)",
       inputSchema: z.object({}),
       execute: async () => getInterests(data),
+    }),
+
+    get_crypto_experience: tool({
+      description:
+        "Get personal crypto experience — how long they've been in crypto, which chains they use, what they've done (staking, farming, bridging, DAOs), hardware wallet usage, and opinions on the space",
+      inputSchema: z.object({}),
+      execute: async () => getCryptoExperience(data),
     }),
   };
 }

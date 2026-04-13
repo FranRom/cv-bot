@@ -64,6 +64,15 @@ export interface Interest {
   items: string[];
 }
 
+export interface CryptoExperience {
+  since: string;
+  summary: string;
+  chains: string[];
+  activities: string[];
+  hardware_wallet: string;
+  opinions: string[];
+}
+
 export interface CvData {
   profile: Profile;
   experience: Experience[];
@@ -72,6 +81,7 @@ export interface CvData {
   education: Education[];
   languages: Language[];
   interests: Interest[];
+  cryptoExperience: CryptoExperience;
   availability: Availability;
 }
 

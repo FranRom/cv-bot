@@ -87,3 +87,7 @@ export function getContact(
 export function getInterests(data: CvData) {
   return data.interests;
 }
+
+export function getCryptoExperience(data: CvData) {
+  return data.cryptoExperience;
+}
