@@ -104,6 +104,15 @@ When the bot processes a question, visitors can see exactly which tools are bein
 
 Completed tool calls also appear as checkmarks above the response in the chat, so you can see which data sources informed each answer.
 
+### Graceful Degradation
+
+When the LLM fails or the rate limit is hit, the bot doesn't show a generic error. Instead, it displays a friendly fallback card with:
+- A clear explanation of what happened (rate limit vs error)
+- Direct links to LinkedIn, GitHub, and email so the visitor can still reach you
+- A retry button for transient errors
+
+This ensures visitors always have a way to connect, even when the AI is unavailable.
+
 ### Tool Design
 
 Tools are designed to be **lean** — they return only filtered data, not the entire CV. This reduces token usage per response:

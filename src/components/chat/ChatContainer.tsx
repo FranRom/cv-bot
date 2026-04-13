@@ -6,6 +6,7 @@ import { TypingIndicator } from "./TypingIndicator";
 import { ToolCallIndicator } from "./ToolCallIndicator";
 import { RobotAvatar } from "./RobotAvatar";
 import { SuggestedQuestions } from "./SuggestedQuestions";
+import { ErrorFallback } from "./ErrorFallback";
 import { config } from "../../lib/config";
 
 interface MessagePart {
@@ -31,7 +32,7 @@ function getToolCalls(message: { parts: MessagePart[] }) {
 }
 
 export function ChatContainer() {
-  const { messages, sendMessage, status, setMessages } = useChat();
+  const { messages, sendMessage, status, setMessages, error, clearError } = useChat();
 
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -142,6 +143,20 @@ export function ChatContainer() {
             messages[messages.length - 1].role === "user" && (
               <TypingIndicator />
             )}
+
+          {error && (
+            <ErrorFallback
+              error={error}
+              onRetry={() => {
+                clearError();
+                const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+                if (lastUserMsg) {
+                  const text = getTextContent(lastUserMsg);
+                  if (text) sendMessage({ text });
+                }
+              }}
+            />
+          )}
 
           <div ref={messagesEndRef} />
         </div>
