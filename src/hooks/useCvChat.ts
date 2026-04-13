@@ -1,5 +1,7 @@
 import { useChat } from "@ai-sdk/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { config } from "../lib/config";
+import type { Tone } from "../lib/types";
 
 interface MessagePart {
   type: string;
@@ -30,6 +32,19 @@ export function useCvChat() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const [tone, setToneState] = useState<Tone>(() => {
+    const saved = localStorage.getItem("cv-bot-tone");
+    if (saved && ["professional", "friendly", "witty", "casual"].includes(saved)) {
+      return saved as Tone;
+    }
+    return config.chat.tone;
+  });
+
+  const setTone = useCallback((newTone: Tone) => {
+    setToneState(newTone);
+    localStorage.setItem("cv-bot-tone", newTone);
+  }, []);
+
   const isLoading = status === "submitted" || status === "streaming";
   const isStreaming = status === "streaming";
   const hasMessages = messages.length > 0;
@@ -48,12 +63,12 @@ export function useCvChat() {
 
   const handleSubmit = () => {
     if (!input.trim()) return;
-    sendMessage({ text: input });
+    sendMessage({ text: input }, { body: { tone } });
     setInput("");
   };
 
   const handleSuggestedQuestion = (question: string) => {
-    sendMessage({ text: question });
+    sendMessage({ text: question }, { body: { tone } });
   };
 
   const handleClear = () => setMessages([]);
@@ -65,7 +80,7 @@ export function useCvChat() {
       .find((m) => m.role === "user");
     if (lastUserMsg) {
       const text = getTextFromParts(lastUserMsg.parts as MessagePart[]);
-      if (text) sendMessage({ text });
+      if (text) sendMessage({ text }, { body: { tone } });
     }
   };
 
@@ -84,6 +99,8 @@ export function useCvChat() {
     // State
     input,
     setInput,
+    tone,
+    setTone,
     processedMessages,
     hasMessages,
     isLoading,
