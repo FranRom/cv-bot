@@ -13,6 +13,15 @@ const typedCvData = cvData as CvData;
 const typedConfig = config as Config;
 const rateLimiter = new RateLimiter(typedConfig.rateLimit);
 
+// Pre-build the system prompt once — it never changes at runtime.
+const systemPrompt = buildSystemPrompt(
+  typedCvData.profile.name,
+  typedConfig.chat
+);
+
+// Pre-build tools once — they're static.
+const tools = createTools(typedCvData);
+
 // Workaround: AI SDK strips "type" from empty object schemas.
 // Patch fetch to ensure input_schema always has "type": "object".
 const originalFetch = globalThis.fetch;
@@ -58,12 +67,25 @@ export default async function handler(req: Request) {
   try {
     const result = streamText({
       model: getModel(typedConfig.llm),
-      system: buildSystemPrompt(typedCvData.profile.name, typedConfig.chat),
+      // System prompt with cache_control: Anthropic caches this across
+      // requests within a 5-minute window, saving ~90% on input tokens.
+      // Other providers ignore the providerOptions and just use the text.
+      system: {
+        role: "system" as const,
+        content: systemPrompt,
+        providerOptions: {
+          anthropic: { cacheControl: { type: "ephemeral" } },
+        },
+      },
       messages: modelMessages,
-      tools: createTools(typedCvData),
+      tools,
       stopWhen: stepCountIs(3),
       maxOutputTokens: typedConfig.llm.maxTokens,
       temperature: typedConfig.llm.temperature,
+      // Enable cache_control on tool definitions too
+      providerOptions: {
+        anthropic: { cacheControl: true },
+      },
     });
 
     return result.toUIMessageStreamResponse();
