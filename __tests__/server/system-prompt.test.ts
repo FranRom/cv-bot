@@ -10,46 +10,58 @@ const baseConfig: ChatConfig = {
 };
 
 describe("buildSystemPrompt", () => {
-  it("includes owner name", () => {
-    const prompt = buildSystemPrompt("Franco R.", baseConfig);
-    expect(prompt).toContain("Franco R.");
+  it("includes owner name from personality.md", () => {
+    const prompt = buildSystemPrompt("Fran Rom", baseConfig);
+    expect(prompt).toContain("Fran Rom");
   });
 
-  it("includes tone instructions for friendly (contains 'friendly' and 'warm')", () => {
-    const prompt = buildSystemPrompt("Franco R.", { ...baseConfig, tone: "friendly" });
+  it("loads and interpolates all prompt files", () => {
+    const prompt = buildSystemPrompt("Fran Rom", baseConfig);
+    // personality.md
+    expect(prompt).toContain("personal assistant representing Fran Rom");
+    // boundaries.md
+    expect(prompt).toContain("Scope");
+    expect(prompt).toContain("Off-limits");
+    // inference-rules.md
+    expect(prompt).toContain("reasonable inferences");
+    expect(prompt).toContain("learns on demand");
+    // response-style.md
+    expect(prompt).toContain("concise");
+    // examples.md
+    expect(prompt).toContain("Few-Shot Examples");
+  });
+
+  it("includes tone instructions for friendly", () => {
+    const prompt = buildSystemPrompt("Fran Rom", { ...baseConfig, tone: "friendly" });
     expect(prompt).toContain("friendly");
     expect(prompt).toContain("warm");
   });
 
-  it("includes tone instructions for professional (contains 'professional' and 'concise')", () => {
-    const prompt = buildSystemPrompt("Franco R.", { ...baseConfig, tone: "professional" });
+  it("includes tone instructions for professional", () => {
+    const prompt = buildSystemPrompt("Fran Rom", { ...baseConfig, tone: "professional" });
     expect(prompt).toContain("professional");
     expect(prompt).toContain("concise");
   });
 
-  it("includes tone instructions for witty (contains 'witty')", () => {
-    const prompt = buildSystemPrompt("Franco R.", { ...baseConfig, tone: "witty" });
+  it("includes tone instructions for witty", () => {
+    const prompt = buildSystemPrompt("Fran Rom", { ...baseConfig, tone: "witty" });
     expect(prompt).toContain("witty");
   });
 
-  it("includes tone instructions for casual (contains 'casual')", () => {
-    const prompt = buildSystemPrompt("Franco R.", { ...baseConfig, tone: "casual" });
+  it("includes tone instructions for casual", () => {
+    const prompt = buildSystemPrompt("Fran Rom", { ...baseConfig, tone: "casual" });
     expect(prompt).toContain("casual");
   });
 
   it("appends systemPromptExtra when provided", () => {
-    const extra = "Always mention that Franco loves coffee.";
-    const prompt = buildSystemPrompt("Franco R.", { ...baseConfig, systemPromptExtra: extra });
+    const extra = "Always mention open source contributions.";
+    const prompt = buildSystemPrompt("Fran Rom", { ...baseConfig, systemPromptExtra: extra });
     expect(prompt).toContain(extra);
   });
 
-  it("includes boundary instructions (contains 'only answer questions')", () => {
-    const prompt = buildSystemPrompt("Franco R.", baseConfig);
-    expect(prompt).toContain("only answer questions");
-  });
-
-  it("includes inference guidance (contains 'reasonable inferences')", () => {
-    const prompt = buildSystemPrompt("Franco R.", baseConfig);
-    expect(prompt).toContain("reasonable inferences");
+  it("caches the composed prompt across calls", () => {
+    const prompt1 = buildSystemPrompt("Fran Rom", baseConfig);
+    const prompt2 = buildSystemPrompt("Fran Rom", baseConfig);
+    expect(prompt1).toBe(prompt2);
   });
 });

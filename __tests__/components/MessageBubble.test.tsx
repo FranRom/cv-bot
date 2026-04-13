@@ -13,15 +13,13 @@ describe("MessageBubble", () => {
     expect(screen.getByText("Hello from assistant")).toBeInTheDocument();
   });
 
-  it("applies different CSS classes for user vs assistant", () => {
-    const { rerender } = render(
+  it("applies different alignment for user vs assistant", () => {
+    const { container, rerender } = render(
       <MessageBubble role="user" content="User message" />
     );
-    const userWrapper = screen.getByText("User message").closest("div");
-    expect(userWrapper?.className).toContain("justify-end");
+    expect(container.firstElementChild?.className).toContain("justify-end");
 
     rerender(<MessageBubble role="assistant" content="Assistant message" />);
-    const assistantWrapper = screen.getByText("Assistant message").closest("div");
-    expect(assistantWrapper?.className).toContain("justify-start");
+    expect(container.firstElementChild?.className).toContain("justify-start");
   });
 });

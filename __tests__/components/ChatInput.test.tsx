@@ -8,7 +8,7 @@ describe("ChatInput", () => {
     render(
       <ChatInput value="" onChange={() => {}} onSubmit={() => {}} isLoading={false} />
     );
-    expect(screen.getByPlaceholderText("Ask me anything...")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Type a message...")).toBeInTheDocument();
     expect(screen.getByRole("button")).toBeInTheDocument();
   });
 
@@ -18,7 +18,7 @@ describe("ChatInput", () => {
     render(
       <ChatInput value="" onChange={onChange} onSubmit={() => {}} isLoading={false} />
     );
-    await user.type(screen.getByPlaceholderText("Ask me anything..."), "hi");
+    await user.type(screen.getByPlaceholderText("Type a message..."), "hi");
     expect(onChange).toHaveBeenCalled();
   });
 
@@ -36,7 +36,7 @@ describe("ChatInput", () => {
     render(
       <ChatInput value="some text" onChange={() => {}} onSubmit={() => {}} isLoading={true} />
     );
-    expect(screen.getByPlaceholderText("Ask me anything...")).toBeDisabled();
+    expect(screen.getByPlaceholderText("Type a message...")).toBeDisabled();
     expect(screen.getByRole("button")).toBeDisabled();
   });
 
@@ -44,7 +44,7 @@ describe("ChatInput", () => {
     render(
       <ChatInput value="" onChange={() => {}} onSubmit={() => {}} isLoading={false} />
     );
-    const input = screen.getByPlaceholderText("Ask me anything...");
+    const input = screen.getByPlaceholderText("Type a message...");
     expect(input).toHaveAttribute("maxLength", "500");
   });
 });
