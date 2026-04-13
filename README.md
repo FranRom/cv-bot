@@ -289,4 +289,4 @@ Rate limiting in `config.json` lets you cap your daily spend.
 
 ## License
 
-MIT
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — free to use, modify, and share with attribution to the [original project](https://github.com/FranRom/cv-bot).
