@@ -61,7 +61,9 @@ export function ChatContainer() {
     lastMessage?.role === "assistant" ? getToolCalls(lastMessage) : [];
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full">
+      {/* Main chat column */}
+      <div className="flex-1 flex flex-col h-full min-w-0">
       {hasMessages && (
         <div className="relative flex items-center justify-center pt-4 pb-2 flex-shrink-0">
           <RobotAvatar isTalking={isStreaming} size="w-32 h-32" />
@@ -181,6 +183,27 @@ export function ChatContainer() {
           isLoading={isLoading}
         />
       </div>
+      </div> {/* end main chat column */}
+
+      {/* Right sidebar — suggested questions, visible during conversation */}
+      {hasMessages && (
+        <div className="hidden lg:flex w-72 flex-col border-l border-white/10 bg-white/5 p-4 overflow-y-auto">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+            Suggested Questions
+          </p>
+          <div className="flex flex-col gap-2">
+            {config.chat.suggestedQuestions.map((question) => (
+              <button
+                key={question}
+                onClick={() => handleSuggestedQuestion(question)}
+                className="text-left px-3 py-2 text-xs text-gray-400 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-gray-300 transition-colors"
+              >
+                {question}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

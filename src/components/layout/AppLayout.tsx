@@ -22,7 +22,7 @@ export function AppLayout({ profile, skills, interests, children }: AppLayoutPro
       )}
 
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-72 transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-30 w-72 bg-gray-950 transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
