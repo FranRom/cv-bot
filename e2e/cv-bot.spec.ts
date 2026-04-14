@@ -18,3 +18,29 @@ test.describe("Welcome screen", () => {
     await expect(buttons).toHaveCount(7);
   });
 });
+
+test.describe("Send a message", () => {
+  test("shows user bubble and streams assistant response", async ({ page }) => {
+    await mockChatAPI(page, {
+      text: "Fran has 8 years of frontend experience with React and TypeScript.",
+    });
+
+    await page.goto("/");
+
+    // Type and submit
+    const input = page.getByPlaceholder("Type a message...");
+    await input.fill("Tell me about Fran's experience");
+    await page.getByRole("button", { name: /arrow/i }).click();
+
+    // User message appears
+    await expect(page.getByText("Tell me about Fran's experience")).toBeVisible();
+
+    // Assistant response streams in
+    await expect(
+      page.getByText("Fran has 8 years of frontend experience")
+    ).toBeVisible();
+
+    // Input is cleared after submit
+    await expect(input).toHaveValue("");
+  });
+});
