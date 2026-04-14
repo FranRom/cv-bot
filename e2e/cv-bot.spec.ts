@@ -44,3 +44,24 @@ test.describe("Send a message", () => {
     await expect(input).toHaveValue("");
   });
 });
+
+test.describe("Suggested question", () => {
+  test("clicking a suggested question sends it and shows response", async ({ page }) => {
+    await mockChatAPI(page, {
+      text: "Fran's tech stack includes React, TypeScript, and Vite.",
+    });
+
+    await page.goto("/");
+
+    // Click a suggested question
+    await page.getByRole("button", { name: "What's Fran's tech stack?" }).click();
+
+    // User message appears with the question text
+    await expect(page.getByText("What's Fran's tech stack?")).toHaveCount(2); // button + user bubble
+
+    // Assistant response appears
+    await expect(
+      page.getByText("Fran's tech stack includes React")
+    ).toBeVisible();
+  });
+});
