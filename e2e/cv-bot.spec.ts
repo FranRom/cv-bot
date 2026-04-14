@@ -175,3 +175,20 @@ test.describe("Tone selector", () => {
     expect(capturedBody.tone).toBe("casual");
   });
 });
+
+test.describe("Error handling", () => {
+  test("shows error fallback when API fails", async ({ page }) => {
+    await mockChatAPIError(page, 500);
+
+    await page.goto("/");
+
+    const input = page.getByPlaceholder("Type a message...");
+    await input.fill("Hello");
+    await page.getByRole("button", { name: /arrow/i }).click();
+
+    // Error fallback renders
+    await expect(page.getByText("Something went wrong")).toBeVisible({
+      timeout: 5000,
+    });
+  });
+});
