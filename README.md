@@ -60,7 +60,8 @@ All tools read from a single `cv-data.json` file — no database, no external AP
 - **User-selectable tone** — visitors pick professional, friendly, witty, or casual from a popover in the chat input; persisted to localStorage and applied per-request
 - **Mobile responsive** — sidebar collapses into a drawer on small screens
 - **Dark theme** with CSS design tokens for easy customization
-- **Pre-commit hooks** — Husky runs all 121 tests before every commit
+- **E2E tests** — Playwright tests with mocked API verify the full user flow (welcome, chat, tool calls, tone selector, error handling)
+- **Pre-commit hooks** — Husky runs all 121 unit tests before every commit
 - **CI/CD** — GitHub Actions runs tests + type-check on push/PR
 
 ## AI Engineering
@@ -164,7 +165,7 @@ Tools are designed to be **lean** — they return only filtered data, not the en
 | Backend | Vercel Serverless Functions (esbuild-bundled) |
 | Schema | Zod 4 |
 | Utilities | clsx + tailwind-merge (`cn()`), CSS design tokens |
-| Testing | Vitest, React Testing Library (121 tests) |
+| Testing | Vitest, React Testing Library (121 unit tests), Playwright E2E (7 tests) |
 | CI/CD | GitHub Actions, Husky pre-commit hooks |
 
 ## Project Structure
@@ -213,6 +214,10 @@ cv-bot/
 ├── public/
 │   ├── avatar.jpg               # Your profile photo
 │   └── robot-*.png              # Robot avatar frames (idle, talking)
+├── e2e/
+│   ├── cv-bot.spec.ts               # Playwright E2E tests (mocked API)
+│   └── helpers/
+│       └── mock-api.ts              # SSE stream mock builders
 └── __tests__/
     ├── ai/                      # AI evaluation tests (21 tests)
     ├── server/                  # Server logic + guard rails + skill router tests
@@ -302,7 +307,9 @@ GOOGLE_GENERATIVE_AI_API_KEY=...
 | `npm run build:vercel` | Full Vercel build (frontend + esbuild-bundled API) |
 | `npm run preview` | Preview production build |
 | `npm test` | Run tests in watch mode |
-| `npm run test:run` | Run tests once (121 tests) |
+| `npm run test:run` | Run unit tests once (121 tests) |
+| `npm run test:e2e` | Run Playwright E2E tests (7 tests) |
+| `npm run test:e2e:ui` | Run E2E tests with Playwright UI |
 
 ## Security
 
