@@ -94,3 +94,84 @@ test.describe("Tool call visibility", () => {
     ).toBeVisible();
   });
 });
+
+test.describe("Tone selector", () => {
+  test("opens popover, selects tone, and persists across reload", async ({ page }) => {
+    await mockChatAPI(page, { text: "Hello!" });
+
+    await page.goto("/");
+
+    // Tone button is visible (default: Friendly)
+    const toneButton = page.getByRole("button", { name: /tone/i });
+    await expect(toneButton).toBeVisible();
+
+    // Open popover
+    await toneButton.click();
+
+    // All 4 tones visible
+    await expect(page.getByText("Professional")).toBeVisible();
+    await expect(page.getByText("Friendly")).toBeVisible();
+    await expect(page.getByText("Witty")).toBeVisible();
+    await expect(page.getByText("Casual")).toBeVisible();
+
+    // Select Witty
+    await page.getByText("Witty").click();
+
+    // Popover closes
+    await expect(page.getByText("Professional")).not.toBeVisible();
+
+    // Tone button now shows Witty icon
+    await expect(page.getByRole("button", { name: /tone: witty/i })).toBeVisible();
+
+    // Reload and verify persistence
+    await page.reload();
+    await expect(page.getByRole("button", { name: /tone: witty/i })).toBeVisible();
+  });
+
+  test("sends selected tone in request body", async ({ page }) => {
+    let capturedBody: Record<string, unknown> = {};
+
+    await page.addInitScript(() => localStorage.clear());
+
+    await page.route("**/api/chat", (route) => {
+      const postData = route.request().postData();
+      if (postData) {
+        capturedBody = JSON.parse(postData);
+      }
+      route.fulfill({
+        status: 200,
+        headers: {
+          "content-type": "text/event-stream",
+          "x-vercel-ai-ui-message-stream": "v1",
+        },
+        body: [
+          `data: {"type":"start","messageId":"m1"}\n\n`,
+          `data: {"type":"start-step"}\n\n`,
+          `data: {"type":"text-start","id":"m1"}\n\n`,
+          `data: {"type":"text-delta","id":"m1","delta":"Hi"}\n\n`,
+          `data: {"type":"text-end","id":"m1"}\n\n`,
+          `data: {"type":"finish-step"}\n\n`,
+          `data: {"type":"finish","finishReason":"stop"}\n\n`,
+          `data: [DONE]\n\n`,
+        ].join(""),
+      });
+    });
+
+    await page.goto("/");
+
+    // Select Casual tone
+    await page.getByRole("button", { name: /tone/i }).click();
+    await page.getByText("Casual").click();
+
+    // Send a message
+    const input = page.getByPlaceholder("Type a message...");
+    await input.fill("Hi");
+    await page.getByRole("button", { name: /arrow/i }).click();
+
+    // Wait for response to confirm request was made
+    await expect(page.getByText("Hi").first()).toBeVisible();
+
+    // Verify the tone was sent in the request body
+    expect(capturedBody.tone).toBe("casual");
+  });
+});
