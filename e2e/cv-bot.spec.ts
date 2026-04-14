@@ -65,3 +65,32 @@ test.describe("Suggested question", () => {
     ).toBeVisible();
   });
 });
+
+test.describe("Tool call visibility", () => {
+  test("shows tool indicators that resolve to checkmarks", async ({ page }) => {
+    await mockChatAPI(page, {
+      text: "Here are Fran's skills in frontend development.",
+      toolCalls: [
+        {
+          toolName: "get_skills",
+          args: { category: "frontend" },
+          result: { frontend: [{ name: "React", level: "expert" }] },
+        },
+      ],
+    });
+
+    await page.goto("/");
+
+    const input = page.getByPlaceholder("Type a message...");
+    await input.fill("What are Fran's frontend skills?");
+    await page.getByRole("button", { name: /arrow/i }).click();
+
+    // Tool indicator shows completed state (checkmark + label)
+    await expect(page.getByText("Checking skills")).toBeVisible();
+
+    // Assistant response also appears
+    await expect(
+      page.getByText("Here are Fran's skills in frontend development")
+    ).toBeVisible();
+  });
+});
