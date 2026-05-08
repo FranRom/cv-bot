@@ -1,9 +1,9 @@
 {
   "profile": {
     "name": "Fran Rom",
-    "title": "Frontend Engineer | Web3 & AI",
-    "location": "Remote",
-    "summary": "Frontend Lead Engineer with 8+ years of experience building Web3 products and leading engineering teams. Passionate about the intersection of blockchain and AI — from building onchain dapps to integrating AI-powered features like natural language interfaces and autonomous agents into real products. Stack includes TypeScript, React, Next.js, wagmi, viem, Solana, and EVM integrations, as well as AI tooling and agentic workflows.",
+    "title": "Senior / Lead Frontend Engineer | Web3 & AI",
+    "location": "Madrid, Spain (UTC+1)",
+    "summary": "Senior Frontend Engineer with 8+ years of experience building production Web3 products, leading engineering teams, and integrating AI into real applications. Comfortable owning the full stack when needed: from onchain dapp architecture to backend services and deployments. Experienced shipping AI-powered features including LLM interfaces, autonomous agents, and agentic workflows in production. Web3 is my background, but the problems I want to solve are not limited to it.",
     "avatar": "/avatar.jpg",
     "links": {
       "github": "https://github.com/FranRom",
@@ -15,78 +15,81 @@
   "experience": [
     {
       "company": "Game7",
-      "role": "Web3 Frontend Lead Engineer",
-      "period": "Feb 2023 - Present",
-      "description": "Led frontend engineering for a Web3 gaming platform, building tools and dapps for game developers.",
+      "role": "Lead Frontend Engineer",
+      "period": "Feb 2023 - Mar 2026",
+      "description": "Led frontend engineering for a Web3 gaming platform, building tools and dapps for game developers, with full-stack and DevOps ownership when needed.",
       "highlights": [
-        "Built and led a team of 3 frontend engineers to deliver a multitenant questing platform with NFTs and a progression system",
-        "Evolved the platform from PaaS to SaaS model, including auth layer, billing integration, and tenant isolation",
-        "Architected and developed Web3 tools and prototypes using Next.js, Vite, wagmi, and viem — including crypto games, game developer tooling, and onchain dashboards",
-        "Integrated AI-powered features to improve dapp usability: natural language interfaces, AI agents, and in-app action execution via chat"
+        "Led a team of 3 frontend engineers to design and ship a multi-tenant questing platform with NFTs and a progression system, migrating the architecture from PaaS to SaaS with auth, billing integration, and full tenant isolation",
+        "Architected and built Web3 tooling with Next.js, Vite, wagmi, and viem: onchain dashboards, game developer SDKs, and dapp prototypes across EVM chains",
+        "Built 2 real-time games driven by live market data, consuming high-frequency WebSocket price feeds and managing low-latency state updates on the frontend",
+        "Integrated LLM-powered features into production dapps: natural language interfaces, AI agents for in-app action execution, automated branding generation, and layout building via chat",
+        "Took full-stack ownership when needed, building and maintaining Node.js services and APIs to support dapp features without blocking frontend delivery",
+        "Managed CI/CD pipelines and production deployments across the company's frontend projects using Cloudflare"
       ],
       "technologies": ["Next.js", "Vite", "TypeScript", "React", "Zustand", "wagmi", "viem", "AI Agents", "Web3", "Vitest", "Cypress", "Playwright", "Storybook", "Cloudflare"]
     },
     {
       "company": "BeInCrypto",
-      "role": "Web3 Frontend Engineer",
+      "role": "Senior Frontend Engineer",
       "period": "Jan 2022 - Feb 2023",
-      "description": "R&D team building Web3 prototypes for a leading crypto media company.",
+      "description": "Built Web3 platforms and prototypes within the R&D team of a leading crypto media company.",
       "highlights": [
-        "Part of the Research & Development team",
-        "Created Web3-based prototypes"
+        "Built a Web3 jobs platform with CMS connecting blockchain companies with talent, using React, Remix, Strapi, and Ethereum",
+        "Developed an education platform with an NFT-gated access system as part of the R&D team, taking it from prototype to stakeholder review",
+        "Created Web3-based prototypes to validate product concepts and inform the direction of new features across the organisation"
       ],
       "technologies": ["Web3", "TypeScript", "React", "Remix", "Strapi", "Ethereum", "wagmi", "viem", "web3.js", "ethers.js"]
     },
     {
       "company": "Elixir.app",
-      "role": "Web3 Frontend Engineer",
+      "role": "Senior Frontend Engineer",
       "period": "Dec 2021 - Jul 2022",
-      "description": "Built multi-chain dapps across EVM and Solana — game launchers, dashboards, and a Web3 launchpad.",
+      "description": "Built the full Web3 frontend for a live NFT marketplace spanning 3 games on EVM and Solana, alongside multi-chain dapps including game launchers, dashboards, and a Web3 launchpad.",
       "highlights": [
+        "Built the full Web3 frontend for a live NFT marketplace spanning 3 games, supporting EVM and Solana collections using wagmi, ethers.js, and Infura",
+        "Implemented staking and farming features within the same product, enabling real users to interact with DeFi mechanics across multiple game ecosystems",
         "Built a game launcher embedded with Electron and game dashboards for managing tokens and NFTs across EVM and Solana",
         "Developed a Web3 launchpad with multi-chain wallet connections",
         "NFT collection minting interfaces on both EVM and Solana",
-        "Implemented staking, farming, and DeFi features with multi-chain support",
         "Handled multi-chain wallet connections across all products"
       ],
       "technologies": ["web3.js", "ethers.js", "wagmi", "viem", "Infura", "React", "Electron", "TypeScript", "GraphQL", "Solana", "EVM", "DeFi"]
     },
     {
       "company": "Woonkly",
-      "role": "Web3 Frontend Engineer",
-      "period": "Sept 2021 - Dec 2021",
-      "description": "Built DeFi platform interfaces with blockchain data integration.",
+      "role": "Senior Frontend Engineer",
+      "period": "Sep 2021 - Dec 2021",
+      "description": "Built DeFi platform interfaces with blockchain data integration for the Defi.finance v2 platform.",
       "highlights": [
-        "Created and maintained Subgraph from blockchain data using The Graph",
-        "Built Defi.finance v2 platform"
+        "Built a custom Subgraph from scratch to index blockchain data, enabling real-time onchain queries for the Defi.finance v2 platform",
+        "Led the frontend integration of new smart contracts, including wallet authentication and the Web3 connection layer, using React, TypeScript, and The Graph"
       ],
       "technologies": ["Web3", "The Graph", "React", "TypeScript", "GraphQL", "DeFi"]
     },
     {
       "company": "Ballena.io",
-      "role": "Web3 Frontend Lead Engineer",
-      "period": "Oct 2020 - 2022",
-      "description": "Co-founded and led frontend development for a DAO building Yield DeFi projects. Reached $1M in Total Value Locked on mainnet.",
+      "role": "Lead Frontend Engineer",
+      "period": "Oct 2020 - Oct 2022",
+      "description": "Sole frontend engineer leading development for a DAO building Yield DeFi platforms. Reached $1M in Total Value Locked on mainnet.",
       "highlights": [
-        "Built two Yield DeFi platforms for a DAO, reaching $1M TVL on mainnet",
+        "Sole frontend engineer on two Yield DeFi platforms for a DAO, built on Pancakeswap and Beefy standards, taking both from zero to mainnet launch",
+        "Reached $1M TVL at peak, validating the platforms' adoption and reliability among real DeFi users",
         "Ran the project for 2 years as frontend lead and DAO contributor",
-        "Used coding standards from Pancakeswap and Beefy for vault architecture",
         "Hands-on with smart contract interaction, staking mechanics, and yield strategies"
       ],
       "technologies": ["Web3", "React", "TypeScript", "DeFi", "Solidity", "EVM"]
     },
     {
       "company": "Lingokids",
-      "role": "Senior Frontend Engineer",
-      "period": "Mar 2020 - Sept 2021",
-      "description": "Developed and maintained a children's learning app with React Native.",
+      "role": "Mobile Frontend Engineer",
+      "period": "Mar 2020 - Sep 2021",
+      "description": "Built the game UI layer for a top-ranked global kids education app, integrating Unity-based games into the React Native mobile experience.",
       "highlights": [
-        "Feature, Performance, Polishing, and Bug ownership",
-        "React Native animations",
-        "App Release process in App Store and Play Store",
-        "Worked closely with UX and designers to translate static designs into code",
-        "Built components library with Storybook",
-        "Ensured cross-platform optimization for mobile phones"
+        "Built the game UI layer for a top-ranked global kids education app: player progression, achievements, and game interfaces with React Native, integrating Unity-based games into the mobile experience",
+        "Owned the App Store and Play Store release process, ensuring smooth cross-platform delivery across iOS and Android",
+        "Collaborated with UX and design to build a shared Storybook component library, improving consistency across the app's 1,600+ interactive activities",
+        "Feature, performance, polishing, and bug ownership across the mobile experience",
+        "Built React Native animations and ensured cross-platform optimization for mobile phones"
       ],
       "technologies": ["React Native", "Redux", "TypeScript", "Jest", "Storybook"]
     },
@@ -94,23 +97,22 @@
       "company": "Spotahome",
       "role": "Frontend Engineer",
       "period": "Feb 2018 - Feb 2020",
-      "description": "Built and maintained the frontend for a real estate platform in Madrid.",
+      "description": "Developed and maintained the frontend for a large-scale rental platform operating across Europe, within a team of 50+ engineers.",
       "highlights": [
-        "Testing React with Jest and Enzyme",
-        "API calls with Apollo Client and GraphQL",
-        "Created and maintained components library with Storybooks",
+        "Developed and maintained listings and booking flow features for a large-scale rental platform operating across Europe, within a team of 50+ engineers using React, GraphQL, and Apollo Client",
+        "Built and maintained a shared Storybook component library and increased frontend reliability through Jest and Enzyme test coverage",
         "Agile SCRUM methodology"
       ],
       "technologies": ["React", "GraphQL", "Apollo Client", "Jest", "Cypress", "Node.js", "Docker", "Styled Components"]
     },
     {
       "company": "Weeboo",
-      "role": "Frontend, Web Designer & Founder",
+      "role": "Freelance Frontend Developer & Founder",
       "period": "Jan 2015 - Dec 2017",
-      "description": "Founded a web design agency, delivering 30+ projects for clients.",
+      "description": "Founded and ran a web design studio in London, delivering 30+ projects for small businesses and agencies end to end.",
       "highlights": [
-        "UX/UI Design for all kinds of websites",
-        "More than 30 projects developed",
+        "Founded and ran a web design studio delivering 30+ projects for small businesses and agencies, handling client relationships, UX/UI design, and technical execution end to end",
+        "UX/UI design for all kinds of websites",
         "Producing products that are user-friendly, effective, and appealing",
         "Custom content management systems on demand"
       ],
@@ -124,6 +126,7 @@
       { "name": "Next.js", "level": "expert" },
       { "name": "React Native", "level": "advanced" },
       { "name": "Vite", "level": "advanced" },
+      { "name": "Remix", "level": "advanced" },
       { "name": "Tailwind CSS", "level": "advanced" },
       { "name": "GraphQL", "level": "advanced" },
       { "name": "Redux", "level": "advanced" },
@@ -138,6 +141,8 @@
       { "name": "web3.js", "level": "advanced" },
       { "name": "Solana", "level": "intermediate" },
       { "name": "The Graph", "level": "intermediate" },
+      { "name": "WalletConnect", "level": "advanced" },
+      { "name": "Smart Contract Interactions", "level": "advanced" },
       { "name": "EVM", "level": "advanced" },
       { "name": "DeFi", "level": "advanced" },
       { "name": "NFTs", "level": "advanced" }
@@ -146,10 +151,13 @@
       { "name": "AI Agents", "level": "intermediate" },
       { "name": "LLM Integration", "level": "intermediate" },
       { "name": "Agentic Workflows", "level": "intermediate" },
-      { "name": "Vercel AI SDK", "level": "intermediate" }
+      { "name": "Vercel AI SDK", "level": "intermediate" },
+      { "name": "OpenAI API", "level": "intermediate" },
+      { "name": "Claude SDK", "level": "intermediate" }
     ],
     "backend": [
       { "name": "Node.js", "level": "intermediate" },
+      { "name": "Express", "level": "intermediate" },
       { "name": "REST APIs", "level": "advanced" },
       { "name": "Apollo Client", "level": "advanced" },
       { "name": "Docker", "level": "intermediate" }
@@ -158,9 +166,14 @@
       { "name": "Git", "level": "expert" },
       { "name": "Jest", "level": "advanced" },
       { "name": "Vitest", "level": "advanced" },
+      { "name": "Enzyme", "level": "advanced" },
       { "name": "Storybook", "level": "advanced" },
       { "name": "Cypress", "level": "advanced" },
       { "name": "Playwright", "level": "intermediate" },
+      { "name": "Cloudflare", "level": "advanced" },
+      { "name": "Vercel", "level": "advanced" },
+      { "name": "Turborepo", "level": "intermediate" },
+      { "name": "CI/CD", "level": "advanced" },
       { "name": "Agile/SCRUM", "level": "advanced" },
       { "name": "Figma", "level": "intermediate" }
     ]
@@ -208,22 +221,22 @@
   ],
   "education": [
     {
+      "institution": "Anthropic",
+      "degree": "AI Engineering Certifications",
+      "period": "2026",
+      "details": "Claude API, Claude Code in Action, Agentic AI, AI Fluency Framework & Foundations"
+    },
+    {
       "institution": "CryptoZombies",
       "degree": "Solidity & Blockchain Development",
       "period": "2022",
-      "details": "Solidity Path (Beginner to Intermediate), Advanced Solidity, Chainlink Decentralized Oracles, Beyond Ethereum Path"
+      "details": "Solidity (Beginner to Advanced), Chainlink Oracles, cross-chain development"
     },
     {
       "institution": "Ironhack",
-      "degree": "Full Stack MEAN Web Development",
+      "degree": "Full Stack Web Development",
       "period": "2017",
-      "details": "JavaScript, Node.js, Express.js, MongoDB, Angular.js, HTML & CSS"
-    },
-    {
-      "institution": "Euroinnova Business School",
-      "degree": "Technical in Digital Marketing, Social Media & Web 2.0",
-      "period": "2007-2009",
-      "details": ""
+      "details": "JavaScript, Node.js, Express, MongoDB, Angular, HTML/CSS"
     },
     {
       "institution": "University of Extremadura",
