@@ -10,13 +10,13 @@
     "systemPromptExtra": "",
     "welcomeMessage": "Hi! I'm Fran's AI assistant. Ask me anything about his experience, skills, or projects.",
     "suggestedQuestions": [
-      "Tell me about how you can help me",
-      "What's Fran's tech stack?",
-      "Tell me about his Web3 experience",
-      "What has he built with AI?",
-      "Show me his DeFi projects",
-      "How was this bot built?",
-      "What interview questions should I ask Fran?"
+      "Is Fran open to AI roles, or only Web3?",
+      "Can Fran own backend work too, or is he frontend-only?",
+      "What's Fran's leadership experience?",
+      "What AI features has Fran shipped to production?",
+      "Tell me about Fran's Web3 background",
+      "Is Fran available, and what's he looking for?",
+      "What does Fran's ideal next role look like?"
     ]
   },
   "rateLimit": {
